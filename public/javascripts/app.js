@@ -38,10 +38,16 @@ app.controller('homeController', function ($scope, io) {
 });
 
 
-app.service('utils', function () {
+app.service('utils', function (LxNotificationService) {
     return {
         ok: function (value) {
             return (value === "" || !value) ? false: true;
+        },
+        info: function (message) {
+            LxNotificationService.info(message);
+        },
+        warn: function (message) {
+            LxNotificationService.warning(message);
         }
     };
 });
@@ -76,10 +82,12 @@ app.factory('comms', function ($rootScope, $http, cache) {
     var obj = {
         connect: function (user,pwd) {
             var url = host+'user?user='+user+'&pwd='+pwd;
+            console.log(url);
             return $http.get(url);
         },
         pwd: function (user,pwd) {
             var url = host+'user?user='+user+'&pwd='+pwd;
+            console.log(url);
             return $http.post(url);
         }
 
@@ -88,7 +96,7 @@ app.factory('comms', function ($rootScope, $http, cache) {
     return obj;
 });
 
-app.factory('io', function ($rootScope, cache, LxNotificationService) {
+app.factory('io', function ($rootScope, cache, utils) {
     
     var obj = {};
     
@@ -108,7 +116,7 @@ app.factory('io', function ($rootScope, cache, LxNotificationService) {
     });
 
     obj.socket.on('user.joined',function (data) {
-        LxNotificationService.info(data+' joined the lobby');
+        utils.info(data+' joined the lobby');
     });
 
     
@@ -156,11 +164,13 @@ app.directive('myUser',function () {
     return {
         restrict: 'E',
         templateUrl: 'partials/userDirective.html',
-        controller: function ($scope, $rootScope, store, utils, comms, LxNotificationService) {
+        controller: function ($scope, $rootScope, store, utils, comms) {
             $scope.errors = {};
             $scope.username = store.get('username') || '';
             $scope.pwd = store.get('pwd') || '';
-             $scope.updateUsername = function ($event) {
+            $scope.pword = '';
+            $scope.updateUsername = function () {
+                console.log($scope.username);
                 $scope.errors.username = false;
                 if (!utils.ok($scope.username)) {
                     $scope.errors.username = true;
@@ -171,34 +181,37 @@ app.directive('myUser',function () {
             };
             $scope.changePassword = function () {
                 $scope.errors.password = false;
-                console.log('changePwd: '+$scope.password);
-                if (!utils.ok($scope.password)) {
+                console.log($scope.pword);
+                if (!utils.ok($scope.pword)) {
                     $scope.errors.password = true;
                 } else {
-                    $scope.pwd = window.btoa($scope.username+':'+$scope.password);
-                    store.set('pwd');
-                    comms.pwd($scope.username,$scope.pwd).success(function (response) {
+                    $scope.pwd = window.btoa($scope.username+':'+$scope.pword);
+                    store.set('pwd',$scope.pwd);
+                    comms.pwd($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
                         $scope.auth = true;
+                        store.set('access',response.access);
                         $rootScope.$broadcast('user.login',response.access);
                     });
                 }               
             };
             $scope.authenticate = function () {
-                comms.connect($scope.username,$scope.pwd).success(function (response) {
+                comms.connect($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
                     console.log(response);
+                    $scope.auth = false;
                     if (!response.exists) {
-                        LxNotificationService.info('No such user');
+                        utils.warn('No such user');
                         return;
                     }
                     if (response.exists && response.setpwd) {
-                        LxNotificationService.info('Set your password');
+                        utils.warn('Set your password');
                         return;
                     } else if (response.exists && !response.login ) {
-                        LxNotificationService.info('Enter your password');
+                        utils.warn('Enter your password');
                         return;
                     }
                     if (response.exists && response.login) {
                         $scope.auth = true;
+                        store.set('access',response.access);
                         $rootScope.$broadcast('user.login',response.access);
                     }
                 }).error(function (response) {
@@ -228,23 +241,39 @@ app.directive('myInput',function () {
             }
             $scope.myicon = $attrs.myicon;
             $scope.myholder = $attrs.myholder;
+            $scope.mytype = $attrs.mytype;
+//            $scope.$watch('myerror',function () {
+//                console.log('myerror: '+$scope.myerror);
+//                $scope.thiserror = $scope.myerror
+//            }); 
         },
         link: function (scope, element, attrs) {
-            element.find('.my-input').focus(function () {    
-                element.find('.input-icon').addClass('focus-icon');
-                element.find('.input-bottom').addClass('focus-bottom');            
+            element.find('.my-input').focus(function () { 
+//                console.log(element);
+//                if (!element.find('.my-input-container').hasClass('validate-error')) {
+                    element.find('.input-icon').addClass('focus-icon');
+                    element.find('.input-bottom').addClass('focus-bottom');  
+//                }
             });
             element.find('.my-input').blur(function () {          
-                element.find('.input-icon').removeClass('focus-icon');
-                element.find('.input-bottom').removeClass('focus-bottom');            
+//                if (!element.find('.my-input-container').hasClass('validate-error')) {
+                    element.find('.input-icon').removeClass('focus-icon');
+                    element.find('.input-bottom').removeClass('focus-bottom');        
+//                }
             }); 
             element.find('.my-input').bind("keydown keypress", function (event) {
-                if(event.which === 13) {
+                if(event.which === 13 && scope.myenter) {
                     scope.$apply(function (){
-//                        scope.$eval(attrs.myenter);
+//                        console.log(element.find('.my-input').val());
+//                        console.log(scope.myvalue);
+                        scope.myvalue = element.find('.my-input').val();
                         scope.myenter();
                     });
                     event.preventDefault();
+                } else {
+                    scope.$apply(function (){
+                       scope.myvalue = element.find('.my-input').val();
+                    });
                 }
             });
         }

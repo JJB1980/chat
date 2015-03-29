@@ -3,6 +3,7 @@
 @default-colour: #1F1F99;
 @pad-sm: 0.5em;
 @pad-lg: 1em;
+@error-color: #B20000;
 
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -93,12 +94,12 @@ a {
     color: @focus-colour;   
 }
 
-.validate-error .user-icon {
-    color: red;
+.validate-error .input-icon {
+    color: @error-color;
 }
 
-.validate-error .user-bottom {
-    background-color: red;
+.validate-error .input-bottom {
+    background-color: @error-color;
 }
 
 .rooms-nav {
@@ -129,4 +130,14 @@ a {
 
 .current-room {
     font-weight: bold;
+}
+
+.chat-messages {
+    width: 100%;
+    min-height: 75%;
+}
+
+.chat-bar {
+    width: 100%;
+    min-height: 23%
 }

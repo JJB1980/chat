@@ -1,27 +1,11 @@
 <div class="my-user" ng-class="{ 'validate-error': errors.username }">
-<!--
-    <div>
-        <span class="input-icon mdi mdi-account"></span>
-        <input id="user" type="text" placeholder="Username..." class="my-input"
-               data-ng-model="username"
-               data-ng-change="updateUsername()"
-               data-ng-model-options="{ debounce: {'default': 500, 'blur': 0} }"/>
-        <span class="input-bottom"></span>
-    </div>
-    <div ng-if="pwd === ''">
-        <span class="input-icon mdi mdi-key"></span>
-        <input id="pwd" type="text" placeholder="Password..." class="my-input"
-               data-ng-model="password"
-               data-ng-change="updatePassword()"
-               data-ng-model-options="{ debounce: {'default': 500, 'blur': 0} }"/>
-        <span class="input-bottom"></span>
-    </div>
--->
+
+    <my-input myvalue="username" myenter="updateUsername" mytype="text"
+              myicon="account" myerror="errors.username"
+              myholder="Username" bounce="false"></my-input>
     
-    <my-input myvalue="username" mychange="updateUsername" myicon="account" myerror="errors.username"
-              myholder="Username" bounce="true"></my-input>
-    
-    <my-input data-ng-if="!auth" myvalue="password" myenter="changePassword" myicon="key" myerror="errors.password"
-          myholder="Password" bounce="false"></my-input>
+    <my-input myvalue="pword" myenter="changePassword" mytype="password"
+            myicon="key" myerror="errors.password" ng-show="!auth" 
+            myholder="Password" bounce="false"></my-input>
 
 </div>

@@ -15,17 +15,17 @@ obj.read = function (filename) {
             }
 //            console.log('OK: ' + filename);
 //            console.log(data);
-            resolve(data);
+            resolve(JSON.parse(data));
         });
     });
     
     return promise;
 };
 
-obj.write = function (filename) {
+obj.write = function (filename,data) {
 
     var promise = new Promise(function (resolve, reject) {
-        fs.writeFile(_dir+filename, function(err) {
+        fs.writeFile(_dir+filename, JSON.stringify(data), function(err) {
             if (err) {
                 reject(err);
             }

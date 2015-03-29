@@ -16,16 +16,12 @@ app.use('/', index);
 app.use('/api/', api);
 
 io.on('connection', function(socket){
-    console.log('a user connected'); 
+//    console.log('a user connected'); 
     cache.set('socket',socket);
     socket.on('disconnect', function(data){
         socket.emit('user.left',data);  
     });
     socket.emit('rooms.available',cache.get('rooms'));
-    socket.on('user.change', function(data){
-        console.log('user changed: '+data);
-        socket.emit('user.joined',data); 
-    });
     socket.on('user.join', function(data){
          
     });
@@ -53,7 +49,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
       message: err.message,
       error: err
     });
@@ -63,8 +59,9 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+    console.log(err);
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: {}
   });

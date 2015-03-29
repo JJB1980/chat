@@ -2,43 +2,55 @@ var express = require('express');
 var router = express.Router();
 var cache = require('../modules/cache.js');
 
-/* GET home page. */
+// get a user if they exist and password is correct
 router.get('/user', function(req, res, next) {
-    console.log(req.params);
     var users = cache.get('users');
     var userFound = false;
-    users.forEach(function (user) {
-        if (req.params.user === user.name) {
+    for (var i = 0; i < users.length; i++) {
+        if (req.query.user === users[i].name) {
             userFound = true;
-            if (req.params.pwd === user.pwd) {
-                res.json({exists:true,login:true,access:user.access});
-            } else if (user.pwd === '') {
+//            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
+            if (req.query.pwd === users[i].pwd) {
+                cache.get('socket').broadcast.emit('user.joined',users[i].name);
+                res.json({exists:true,login:true,access:users[i].access});
+            } else if (users[i].pwd === '') {
                 res.json({exists:true,setpwd:true});
             } else {
                 res.json({exists:true,login:false});
             }
+            break;
         }
-    });
-    if (!userFound) {
+    }
+    if (!userFound && req.query.user !== '') {
         var obj = {
-            name: req.params.user,
+            name: req.query.user,
             pwd: '',
             access: 'user'
         }
         cache.values['users'].push(obj);
         res.json({exists:true,setpwd:true});
+    } else if (!userFound) {
+        res.json({exists:false});
     }
 });
 
+// set a users password if not already set
 router.post('/user', function(req, res, next) {
-    var i;
-    for (i = 0; i < cache.values['users'].length; i++) {
-        if (req.params.user === user.name) {   
-            cache.values['users'][i].pwd = req.params.pwd;
+    var found = -1;
+    var username = req.query.user;
+    for (var i = 0; i < cache.values['users'].length; i++) {
+        if (username === cache.values['users'][i].name && cache.values['users'][i].pwd === '') {   
+            cache.values['users'][i].pwd = req.query.pwd;
+            found = i;
             break;
         }
     }
-    res.json({exists:true,login:true,access:cache.values['users'][i].access});
+    if (found >= 0) {
+        cache.get('socket').broadcast.emit('user.joined',username);
+        res.json({exists:true,login:true,access:cache.values['users'][found].access});
+    } else {
+        res.json({error:'access denied'});
+    }
 });
 
 module.exports = router;

@@ -73,11 +73,11 @@ a {
 .focus-icon {
   color: #8585ff !important;
 }
-.validate-error .user-icon {
-  color: red;
+.validate-error .input-icon {
+  color: #b20000;
 }
-.validate-error .user-bottom {
-  background-color: red;
+.validate-error .input-bottom {
+  background-color: #b20000;
 }
 .rooms-nav {
   display: inline-block;
@@ -102,4 +102,12 @@ a {
 }
 .current-room {
   font-weight: bold;
+}
+.chat-messages {
+  width: 100%;
+  min-height: 75%;
+}
+.chat-bar {
+  width: 100%;
+  min-height: 23%;
 }
