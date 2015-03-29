@@ -71,6 +71,21 @@ app.service('cache', function () {
 
 app.factory('comms', function ($rootScope, $http, cache) {
     
+    var host = 'http://localhost:3000/api/';
+    
+    var obj = {
+        connect: function (user,pwd) {
+            var url = host+'user?user='+user+'&pwd='+pwd;
+            return $http.get(url);
+        },
+        pwd: function (user,pwd) {
+            var url = host+'user?user='+user+'&pwd='+pwd;
+            return $http.post(url);
+        }
+
+    }
+    
+    return obj;
 });
 
 app.factory('io', function ($rootScope, cache, LxNotificationService) {
@@ -141,32 +156,97 @@ app.directive('myUser',function () {
     return {
         restrict: 'E',
         templateUrl: 'partials/userDirective.html',
-        controller: function ($scope, $rootScope, store, utils, io) {
+        controller: function ($scope, $rootScope, store, utils, comms, LxNotificationService) {
             $scope.errors = {};
             $scope.username = store.get('username') || '';
-            if ($scope.username !== '') {
-                io.emit('user.change',$scope.username);
-            }
-            $scope.updateUsername = function () {
-                $scope.errors = {};
+            $scope.pwd = store.get('pwd') || '';
+             $scope.updateUsername = function ($event) {
+                $scope.errors.username = false;
                 if (!utils.ok($scope.username)) {
                     $scope.errors.username = true;
                 } else {
-                    io.emit('user.change',$scope.username);
+                    $scope.authenticate();
                 }
                 store.set('username',$scope.username);
+            };
+            $scope.changePassword = function () {
+                $scope.errors.password = false;
+                console.log('changePwd: '+$scope.password);
+                if (!utils.ok($scope.password)) {
+                    $scope.errors.password = true;
+                } else {
+                    $scope.pwd = window.btoa($scope.username+':'+$scope.password);
+                    store.set('pwd');
+                    comms.pwd($scope.username,$scope.pwd).success(function (response) {
+                        $scope.auth = true;
+                        $rootScope.$broadcast('user.login',response.access);
+                    });
+                }               
+            };
+            $scope.authenticate = function () {
+                comms.connect($scope.username,$scope.pwd).success(function (response) {
+                    console.log(response);
+                    if (!response.exists) {
+                        LxNotificationService.info('No such user');
+                        return;
+                    }
+                    if (response.exists && response.setpwd) {
+                        LxNotificationService.info('Set your password');
+                        return;
+                    } else if (response.exists && !response.login ) {
+                        LxNotificationService.info('Enter your password');
+                        return;
+                    }
+                    if (response.exists && response.login) {
+                        $scope.auth = true;
+                        $rootScope.$broadcast('user.login',response.access);
+                    }
+                }).error(function (response) {
+                    console.log(response);
+                });
+            };
+            if ($scope.username !== '') {
+                $scope.authenticate();
             }
-        },
-        link: function (scope, element) {
-            element.find('input').focus(function () {    
-                element.find('.input-icon').addClass('focus-icon');
-                element.find('.input-bottom').addClass('focus-bottom');            
-            });
-            element.find('input').blur(function () {          
-                element.find('.input-icon').removeClass('focus-icon');
-                element.find('.input-bottom').removeClass('focus-bottom');            
-            }); 
-        }
+       }
     };
 });
 
+app.directive('myInput',function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'partials/inputDirective.html',
+        scope: {
+            myvalue: '=myvalue',
+            mychange: '=mychange',
+            myerror: '=myerror',
+            myenter: '=myenter'
+        },
+        controller: function ($scope, $attrs) {
+            if ($attrs.bounce) {
+                $scope.bounce = { debounce: {'default': 500, 'blur': 0} };
+            }
+            $scope.myicon = $attrs.myicon;
+            $scope.myholder = $attrs.myholder;
+        },
+        link: function (scope, element, attrs) {
+            element.find('.my-input').focus(function () {    
+                element.find('.input-icon').addClass('focus-icon');
+                element.find('.input-bottom').addClass('focus-bottom');            
+            });
+            element.find('.my-input').blur(function () {          
+                element.find('.input-icon').removeClass('focus-icon');
+                element.find('.input-bottom').removeClass('focus-bottom');            
+            }); 
+            element.find('.my-input').bind("keydown keypress", function (event) {
+                if(event.which === 13) {
+                    scope.$apply(function (){
+//                        scope.$eval(attrs.myenter);
+                        scope.myenter();
+                    });
+                    event.preventDefault();
+                }
+            });
+        }
+    };
+});

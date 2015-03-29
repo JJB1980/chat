@@ -7,14 +7,17 @@ var cache = require('./modules/cache.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-var routes = require('./routes/index');
+var index = require('./routes/index');
 var users = require('./routes/users.js');
 var rooms = require('./routes/rooms.js');
+var api = require('./routes/api.js');
 
-app.use('/', routes);
+app.use('/', index);
+app.use('/api/', api);
 
 io.on('connection', function(socket){
     console.log('a user connected'); 
+    cache.set('socket',socket);
     socket.on('disconnect', function(data){
         socket.emit('user.left',data);  
     });

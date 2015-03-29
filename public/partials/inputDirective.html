@@ -1,0 +1,8 @@
+<div class="my-input-container" ng-class="{ 'validate-error': myerror }">    
+    <span class="input-icon mdi mdi-{{myicon}}"></span>
+    <input type="text" placeholder="{{myholder}}..." class="my-input"
+           data-ng-model="myvalue"
+           data-ng-change="mychange($event)"
+           data-ng-model-options="bounce"/>
+    <span class="input-bottom"></span>
+</div>
