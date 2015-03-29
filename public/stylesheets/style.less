@@ -1,0 +1,127 @@
+@borders: 1px solid #D6D6FF;
+@focus-colour: #8585FF !important;
+@default-colour: #1F1F99;
+@pad-sm: 0.5em;
+@pad-lg: 1em;
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #C2C2FF !important;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.hide {
+    dispaly: none;
+}
+
+.hand {
+    cursor: pointer;
+}
+
+#content-container {
+    height: 100%;
+    min-height: 100%;
+    width: 1000px;
+    border: none;
+    overflow: hidden;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #EBEBFF;
+    padding: none;
+}
+
+#left-container {
+    border-right: @borders;
+    padding: 1em;
+    overflow: auto;
+    min-height: 100%;
+/*    background-color: blue;*/
+}
+
+#right-container {
+    padding: 1em;  
+    overflow: auto;
+    min-height: 100%;
+/*    background-color: green;*/
+}
+
+.input-icon {
+    width: 10%;
+    color: @default-colour;
+    text-align: center;
+    font-size: 1.2em !important;
+    position: relative;
+    top: 0.2em;
+}
+
+.my-user {
+    border-bottom: @borders;
+    padding-bottom: 2em;
+}
+
+.my-input {
+    width: 80%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    margin-left: 0.5em;
+}
+
+.input-bottom {
+    height: 1px;
+    width: 80%;
+    margin-left: 11%;
+    background-color: @default-colour;
+    margin-top: 0.2em;
+    display: inline-block;
+    float: left;
+}
+
+.focus-bottom {
+    background-color: @focus-colour;   
+    height: 2px !important;
+}
+
+.focus-icon {
+    color: @focus-colour;   
+}
+
+.validate-error .user-icon {
+    color: red;
+}
+
+.validate-error .user-bottom {
+    background-color: red;
+}
+
+.rooms-nav {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.my-rooms {
+    padding: 0.5em;
+}
+
+.my-room {
+    margin-top: 0.5em;
+    width: 100%;
+}
+
+.room-icon {
+    width: 25%;
+    text-align: center;
+}
+
+.room-name {
+    width: 70%;
+}
+
+.current-room {
+    font-weight: bold;
+}
