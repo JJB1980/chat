@@ -1,6 +1,7 @@
 
 <div class="row">
-    <div class="col-md-3" id="left-container">
+    
+    <div class="col-md-3 col-sm-12" id="left-container">
         <my-user></my-user>
         <div id="my-progress"></div>
         <my-rooms></my-rooms>
@@ -10,11 +11,20 @@
         <div class="chat-messages">
             <h4>Current Room: <i>{{currentRoom}}</i></h4>
             <div class="row">
-                <div class="col-md-9 col-sm-9" lx-scrollbar>
-                    
+                <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container">
+                    <div class="chat-table">
+                        <div class="chat-row" data-ng-repeat="msg in chat">
+                            <div class="chat-time">{{msg.time}}</div>
+                            <div class="chat-user">{{msg.user}}</div>
+                            <div class="chat-message">{{msg.msg}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3 col-sm-3" lx-scrollbar>
-                    
+                <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
+                    <h5>Users</h5>
+                    <ul>
+                        <li data-ng-repeat="user in users">{{user}}</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -24,6 +34,5 @@
             </my-input>
         </div>
     </div>
-    
-    
+
 </div>

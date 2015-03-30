@@ -3,22 +3,29 @@ var data = require('../modules/data.js');
 
 var obj = {};
 
-data.read('users.json').then(function (data) {
-    cache.set('users',data.data);
-//    console.log(data);
-}, function (err) {
-    console.log(err);
-    cache.set('users',[]);
-});
 
-setInterval(function () {
-    var arr = cache.values['users'];
-    var dat = {data: arr};
-    data.write('users.json',dat).then(function (response) {
-//        console.log('user data written.');
-    }, function (err) {
-        console.log(err);
-    });
-}, 10000);
+obj.setRoom = function (user,room) {
+    var users = cache.get('users');
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].name === user) {
+            users[i].room = room;
+            break;
+        }
+    }
+    cache.set('users',users);
+};
+
+obj.getRoom = function (user) {
+    var users = cache.get('users');
+//    console.log(users);
+    var room = '';
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].name === user) {
+            room = users[i].room;
+            break;
+        }
+    }
+    return room;
+};
 
 module.exports = obj;

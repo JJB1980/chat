@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var users = require('./routes/users.js');
 var rooms = require('./routes/rooms.js');
 var api = require('./routes/api.js');
+var chat = require('./routes/chat.js');
 
 app.use('/', index);
 app.use('/api/', api);
@@ -19,22 +20,56 @@ io.on('connection', function(socket){
 //    console.log('a user connected'); 
     cache.set('socket',socket);
     socket.on('disconnect', function(data){
-        socket.emit('user.left',data);  
-    });
-    
-    socket.emit('rooms.available',cache.get('rooms'));
-    socket.on('room.join', function(data){
-        socket.join(data+'@rooms');
-        console.log('someone joined ' + data);
-    });
-    socket.on('room.leave', function(data){
-        socket.leave(data+'@rooms');
-        console.log('someone left ' + data);
+        if (socket.user && socket.room) {
+            users.setRoom(socket.user,null);
+            socket.broadcast.to(socket.room).emit('user.list',rooms.userList(socket.room));    
+            socket.leave(socket.room);
+        }
+        console.log(socket.user+' disconnected');
+        if ( socket.user ) {
+            io.sockets.emit('user.left',socket.user);  
+        }
     });
     
     socket.on('room.join', function(data){
-        console.log('room changed: '+data);
+        var currentRoom = users.getRoom(socket.user);
+        users.setRoom(socket.user,data);
+        socket.room = data;
+        if (currentRoom) {
+            socket.broadcast.to(currentRoom).emit('user.list',rooms.userList(currentRoom));
+            socket.leave(currentRoom);
+        }
+        socket.join(data);
+        io.sockets.in(socket.room).emit('user.list',rooms.userList(data));  
+        io.sockets.in(socket.room).emit('chat.history',cache.get(data+'.chat'));          
+        console.log(socket.user+' joined ' + data);
     });
+
+    socket.on('chat.message',function (data) {
+        console.log(socket.user+'@'+socket.room+':'+data);
+        var chat = cache.get(socket.room+'.chat') || [];
+        // only keep the last 50 messages;
+        if (chat.length >= 50) {
+            chat.shift();
+        }
+        var d = new Date();
+        var msg = {
+            time: d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+' '+(d.getHours())+':'+d.getMinutes()+':'+d.getSeconds(),
+            msg: data,
+            user: socket.user
+        };
+        chat.push(msg);
+        cache.set(socket.room+'.chat',chat)
+        io.sockets.in(socket.room).emit('chat.update',msg); 
+    });
+    
+    socket.on('user.register', function(data){
+        socket.user = data;
+        var currentRoom = users.getRoom(socket.user);
+        socket.emit('user.registered',currentRoom);  
+        console.log('user '+data+' registered');
+    });
+    
 });
 
 http.listen(3000, function(){

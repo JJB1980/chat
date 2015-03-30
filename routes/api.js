@@ -13,10 +13,11 @@ router.get('/user', function(req, res, next) {
     for (var i = 0; i < users.length; i++) {
         if (req.query.user === users[i].name) {
             userFound = true;
-            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
+//            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
             if (req.query.pwd === users[i].pwd) {
-                if (cache.get('socket'))
+                if (cache.get('socket')) {
                     cache.get('socket').broadcast.emit('user.joined',users[i].name);
+                }
                 res.json({exists:true,login:true,access:users[i].access});
             } else if (users[i].pwd === '') {
                 res.json({exists:true,setpwd:true});
@@ -51,8 +52,9 @@ router.post('/user', function(req, res, next) {
         }
     }
     if (found >= 0) {
-        if (cache.get('socket'))
+        if (cache.get('socket')) {
             cache.get('socket').broadcast.emit('user.joined',username);
+        }
         res.json({exists:true,login:true,access:cache.values['users'][found].access});
     } else {
         res.json({error:'access denied'});

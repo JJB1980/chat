@@ -33,14 +33,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
         });
 });
 
-app.controller('homeController', function ($scope, $rootScope, utils, io, store) {
+app.controller('homeController', function ($scope, $rootScope, utils, io) {
     
-    $scope.comments = [];
+    $scope.chat = [];
+    $scope.users = [];
     
     $scope.submitComment = function () {
         if (utils.ok($scope.comment)) {
-            console.log($scope.comment);    
-            utils.info('Message sent.');
+//            console.log($scope.comment);    
+//            utils.info('Message sent.');
+            io.emit('chat.message',$scope.comment);
             $scope.comment = '';
         }
     };
@@ -48,20 +50,32 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
     $scope.currentRoom = '';
     
     $rootScope.$on('room.change',function (event, room) {
-        if ($scope.currentRoom !== '') {
-            io.emit('room.leave',{
-                room: $scope.currentRoom
-                user: store.get('username')
-            });
-        }
         console.log('join room '+room);
-        io.emit('room.join',{
-            room: room
-            user: store.get('username')
-        });
+        io.emit('room.join',room);
         $scope.currentRoom = room;
     });
 
+    io.socket.on('user.list',function (data) {
+        console.log('user.list updated');
+        $scope.users = data;
+        $scope.$apply();
+    });
+
+    io.socket.on('chat.history',function (data) {
+        console.log('chat.history updated');
+        $scope.chat = data;
+        $scope.$apply();
+        $(".chat-messages-container").scrollTop($(".chat-messages-container")[0].scrollHeight);
+    });
+    
+    io.socket.on('chat.update',function (data) {
+        console.log('chat.update updated');
+        console.log(data);
+        $scope.chat.push(data);
+        $scope.$apply();
+        $(".chat-messages-container").scrollTop($(".chat-messages-container")[0].scrollHeight);
+    });
+     
 });
 
 
@@ -102,7 +116,7 @@ app.service('cache', function () {
     };
 });
 
-app.factory('comms', function ($rootScope, $http, cache) {
+app.factory('comms', function ($rootScope, $http) {
     
 //    var host = 'http://localhost:3000/api/';
     var host = window.location.origin + '/api/';
@@ -128,7 +142,7 @@ app.factory('comms', function ($rootScope, $http, cache) {
     return obj;
 });
 
-app.factory('io', function ($rootScope, cache, utils) {
+app.factory('io', function ($rootScope, utils) {
     
     var obj = {};
     
@@ -143,7 +157,12 @@ app.factory('io', function ($rootScope, cache, utils) {
     };
 
     obj.socket.on('user.joined',function (data) {
-        utils.info(data+' joined the lobby');
+        utils.info(data+' has joined.');
+    });
+
+    obj.socket.on('user.left',function (data) {
+        console.log('user.left');
+        utils.info(data+' has left.');
     });
 
     return obj;
@@ -155,19 +174,34 @@ app.directive('myRooms',function () {
         restrict: 'E',
         templateUrl: 'partials/roomsDirective.html',
         scope: {},
-        controller: function ($scope, $rootScope, comms) {
+        controller: function ($scope, $rootScope, comms, io) {
             $scope.rooms = [];
             comms.rooms().success(function (response) {
-                console.log(response);
-                $scope.rooms = response;
-                $scope.changeRoom($scope.rooms[0],0);
+//                console.log(response);
+                $scope.rooms = response;      
             }).error(function (response) {
-               console.log(response); 
+                console.log(response); 
             });
             $scope.changeRoom = function (room,index) {
                 $scope.currentRoom = index;
+//                console.log(room);
                 $rootScope.$broadcast('room.change',room.name);
             };
+            io.socket.on('user.registered',function (event,data) {
+                var found = false;
+                if (data) {
+                    for (var i = 0; i < $scope.rooms.length; i++) {
+                        if ($scope.rooms[i].name === data.room) {
+                            $scope.changeRoom($scope.rooms[i],i);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    $scope.changeRoom($scope.rooms[0],0);   
+                }
+            });
         },
         link: function (scope, element) {
             element.find('.rooms-show').click(function () {
@@ -193,7 +227,7 @@ app.directive('myUser',function () {
     return {
         restrict: 'E',
         templateUrl: 'partials/userDirective.html',
-        controller: function ($scope, $rootScope, store, utils, comms) {
+        controller: function ($scope, $rootScope, store, utils, comms, io) {
             $scope.errors = {};
             $scope.username = store.get('username') || '';
             $scope.pwd = store.get('pwd') || '';
@@ -224,7 +258,7 @@ app.directive('myUser',function () {
             };
             $scope.authenticate = function () {
                 comms.connect($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
-                    console.log(response);
+//                    console.log(response);
                     $scope.auth = false;
                     if (!response.exists) {
                         utils.warn('No such user');
@@ -240,7 +274,7 @@ app.directive('myUser',function () {
                     if (response.exists && response.login) {
                         $scope.auth = true;
                         store.set('access',response.access);
-                        $rootScope.$broadcast('user.login',response.access);
+                        io.emit('user.register',$scope.username);
                     }
                 }).error(function (response) {
                     console.log(response);
@@ -281,7 +315,7 @@ app.directive('myInput',function () {
 //                if (!element.find('.my-input-container').hasClass('validate-error')) {
                     element.find('.input-icon').addClass('focus-icon');
                     element.find('.input-bottom').addClass('focus-bottom');  
-                    console.log($(element.find('.input-bottom').children()[0]));
+//                    console.log($(element.find('.input-bottom').children()[0]));
                     $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},400,"linear");
 //                }
             });

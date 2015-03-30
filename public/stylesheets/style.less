@@ -10,6 +10,10 @@ body {
     background-color: #C2C2FF !important;
 }
 
+h4, h2, h3, h5 {
+    color: #3366FF !important;
+}
+
 a {
   color: #00B7FF;
 }
@@ -143,31 +147,87 @@ a {
     width: 100%;
     min-height: 75%;
     border-bottom: @borders;
+    overflow: hidden;
 }
 
+.chat-messages-container {
+    overflow: auto;
+    height: 30em;
+    border-right: @borders;
+}
+
+.chat-users-container {
+    overflow: auto;
+    height: 30em;
+    padding: 1.5em !important;
+}
+.chat-users-container ul {
+    list-style-type: none;
+}
+.chat-users-container ul li {
+    font-weight: bold;
+    font-size: 0.8em;
+    font-style: italic;
+    padding: 0.2em;
+}
 .chat-bar {
     width: 100%;
-    min-height: 23%
+    min-height: 5em
+}
+
+.chat-table {
+    display: table;
+    margin-top: 0.5em;
+}
+
+.chat-row {
+    width: 100%;
+    padding: 0.2em;
+    display: table-row;
+}
+
+.chat-user, .chat-message, .chat-time {
+    display: table-cell;
+    padding: 0.2em !important;
+}
+
+.chat-user {
+    font-weight: bold;
+    font-size: 0.8em;
+    font-style: italic;
+    width: 20%;
+}
+
+.chat-message {
+    font-family: tahoma;
+    font-size: 0.9em;
+    width: 60%;   
+}
+
+.chat-time {
+    font-size: 0.7em !important;
 }
 
 @media (max-width: 1000px) {
     #left-container {
-        min-height: 20%;
+        min-height: 8em;
     }
     #right-container {
-        min-height: 68%;
-        max-height: 68%
+        min-height: 40em;
     }
     .my-rooms {
         border-bottom: @borders;
     }
     .chat-messages {
-        width: 100%;
-        min-height: 50%;
+        width: 99%;
+        min-height: 20em !important;
         border-bottom: @borders;
     }
     .chat-bar {
-        width: 100%;
-        min-height: 33%
+        width: 99%;
+        min-height: 5em;
+    }
+    .chat-messages-container, .chat-users-container {
+        height: 20em;
     }
 }
