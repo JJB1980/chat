@@ -1,11 +1,11 @@
-<div class="my-rooms"  lx-scrollbar>
+<div class="my-rooms">
 
     <span class="mdi mdi-chevron-down hidden-md hidden-lg rooms-nav rooms-show hand" 
           lx-tooltip="Show Rooms" tooltip-position="bottom"></span>
     <span class="mdi mdi-chevron-up rooms-nav rooms-hide hidden-sm hidden-xs hidden-md hidden-lg hand" 
           lx-tooltip="Hide Rooms" tooltip-position="bottom"></span>
     
-    <div class="hidden-sm hidden-xs my-rooms-content">
+    <div class="hidden-sm hidden-xs my-rooms-content" lx-scrollbar>
         <h4>Rooms</h4>
 
         <div data-ng-repeat="room in rooms" >

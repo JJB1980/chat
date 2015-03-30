@@ -1,0 +1,11 @@
+{
+    "data": [
+        { "name": "Lobby", "icon": "home" },
+        { "name": "Air Balloons", "icon": "airballoon" },
+        { "name": "Flying", "icon": "airplane" },
+        { "name": "Shopping", "icon": "basket" },
+        { "name": "Cakes", "icon": "cake" },
+        { "name": "Automotive", "icon": "car" },
+        { "name": "Dining", "icon": "silverware" }
+    ]
+}

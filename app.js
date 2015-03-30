@@ -21,11 +21,18 @@ io.on('connection', function(socket){
     socket.on('disconnect', function(data){
         socket.emit('user.left',data);  
     });
+    
     socket.emit('rooms.available',cache.get('rooms'));
-    socket.on('user.join', function(data){
-         
+    socket.on('room.join', function(data){
+        socket.join(data+'@rooms');
+        console.log('someone joined ' + data);
     });
-    socket.on('room.change', function(data){
+    socket.on('room.leave', function(data){
+        socket.leave(data+'@rooms');
+        console.log('someone left ' + data);
+    });
+    
+    socket.on('room.join', function(data){
         console.log('room changed: '+data);
     });
 });

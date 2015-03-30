@@ -33,8 +33,35 @@ app.config(function($stateProvider, $urlRouterProvider) {
         });
 });
 
-app.controller('homeController', function ($scope, io) {
+app.controller('homeController', function ($scope, $rootScope, utils, io, store) {
     
+    $scope.comments = [];
+    
+    $scope.submitComment = function () {
+        if (utils.ok($scope.comment)) {
+            console.log($scope.comment);    
+            utils.info('Message sent.');
+            $scope.comment = '';
+        }
+    };
+
+    $scope.currentRoom = '';
+    
+    $rootScope.$on('room.change',function (event, room) {
+        if ($scope.currentRoom !== '') {
+            io.emit('room.leave',{
+                room: $scope.currentRoom
+                user: store.get('username')
+            });
+        }
+        console.log('join room '+room);
+        io.emit('room.join',{
+            room: room
+            user: store.get('username')
+        });
+        $scope.currentRoom = room;
+    });
+
 });
 
 
@@ -77,7 +104,8 @@ app.service('cache', function () {
 
 app.factory('comms', function ($rootScope, $http, cache) {
     
-    var host = 'http://localhost:3000/api/';
+//    var host = 'http://localhost:3000/api/';
+    var host = window.location.origin + '/api/';
     
     var obj = {
         connect: function (user,pwd) {
@@ -89,8 +117,12 @@ app.factory('comms', function ($rootScope, $http, cache) {
             var url = host+'user?user='+user+'&pwd='+pwd;
             console.log(url);
             return $http.post(url);
+        },
+        rooms: function () {
+            var url = host+'rooms';
+            console.log(url);
+            return $http.get(url);
         }
-
     }
     
     return obj;
@@ -109,17 +141,11 @@ app.factory('io', function ($rootScope, cache, utils) {
             this.socket.emit(event,data);
         }
     };
-    
-    obj.socket.on('rooms.available',function (data) {
-        $rootScope.$broadcast('rooms.change',data);
-        cache.set('rooms',data);
-    });
 
     obj.socket.on('user.joined',function (data) {
         utils.info(data+' joined the lobby');
     });
 
-    
     return obj;
     
 });
@@ -128,16 +154,19 @@ app.directive('myRooms',function () {
     return {
         restrict: 'E',
         templateUrl: 'partials/roomsDirective.html',
-        controller: function ($scope, $rootScope, cache, io) {
-            $scope.currentRoom = 0;
-            $scope.rooms = cache.get('rooms') || [];
-            $rootScope.$on('rooms.change',function (event, data) {
-                $scope.rooms = data || cache.get('rooms');
-                $scope.$apply();
-             });
+        scope: {},
+        controller: function ($scope, $rootScope, comms) {
+            $scope.rooms = [];
+            comms.rooms().success(function (response) {
+                console.log(response);
+                $scope.rooms = response;
+                $scope.changeRoom($scope.rooms[0],0);
+            }).error(function (response) {
+               console.log(response); 
+            });
             $scope.changeRoom = function (room,index) {
                 $scope.currentRoom = index;
-                io.emit('room.change',room.name);
+                $rootScope.$broadcast('room.change',room.name);
             };
         },
         link: function (scope, element) {
@@ -190,7 +219,6 @@ app.directive('myUser',function () {
                     comms.pwd($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
                         $scope.auth = true;
                         store.set('access',response.access);
-                        $rootScope.$broadcast('user.login',response.access);
                     });
                 }               
             };
@@ -253,12 +281,16 @@ app.directive('myInput',function () {
 //                if (!element.find('.my-input-container').hasClass('validate-error')) {
                     element.find('.input-icon').addClass('focus-icon');
                     element.find('.input-bottom').addClass('focus-bottom');  
+                    console.log($(element.find('.input-bottom').children()[0]));
+                    $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},400,"linear");
 //                }
             });
             element.find('.my-input').blur(function () {          
-//                if (!element.find('.my-input-container').hasClass('validate-error')) {
+//                if (!element.find('.my-input-container').hasClass('validate-error')) {          
                     element.find('.input-icon').removeClass('focus-icon');
-                    element.find('.input-bottom').removeClass('focus-bottom');        
+                    $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '0%'},400,"linear",function() {
+                        element.find('.input-bottom').removeClass('focus-bottom'); 
+                    });
 //                }
             }); 
             element.find('.my-input').bind("keydown keypress", function (event) {

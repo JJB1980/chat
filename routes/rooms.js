@@ -1,18 +1,14 @@
 var cache = require('../modules/cache.js');
 var data = require('../modules/data.js');
 
-var rooms = {
-    data: [
-        { name: "Lobby", icon: "home" },
-        { name: "Air Balloons", icon: "airballoon" },
-        { name: "Flying", icon: "airplane" },
-        { name: "Shopping", icon: "basket" },
-        { name: "Cakes", icon: "cake" },
-        { name: "Automotive", icon: "car" },
-        { name: "Dining", icon: "silverware" }
-    ]
-};
+var obj = {};
 
-cache.set('rooms',rooms.data);
+data.read('rooms.json').then(function (data) {
+    cache.set('rooms',data.data);
+//    console.log(data);
+}, function (err) {
+    console.log(err);
+    cache.set('rooms',[]);
+});
 
-module.exports = rooms;
+module.exports = obj;

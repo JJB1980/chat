@@ -3,9 +3,9 @@ var data = require('../modules/data.js');
 
 var obj = {};
 
-data.read('users.dat').then(function (data) {
+data.read('users.json').then(function (data) {
     cache.set('users',data.data);
-    console.log(data);
+//    console.log(data);
 }, function (err) {
     console.log(err);
     cache.set('users',[]);
@@ -14,7 +14,7 @@ data.read('users.dat').then(function (data) {
 setInterval(function () {
     var arr = cache.values['users'];
     var dat = {data: arr};
-    data.write('users.dat',dat).then(function (response) {
+    data.write('users.json',dat).then(function (response) {
 //        console.log('user data written.');
     }, function (err) {
         console.log(err);
