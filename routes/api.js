@@ -3,7 +3,7 @@ var router = express.Router();
 var cache = require('../modules/cache.js');
 
 router.get('/rooms', function(req, res, next) {
-    res.json(cache.get('rooms'));
+    res.json({data: cache.get('rooms')});
 });
 
 // get a user if they exist and password is correct
@@ -15,10 +15,7 @@ router.get('/user', function(req, res, next) {
             userFound = true;
 //            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
             if (req.query.pwd === users[i].pwd) {
-                if (cache.get('socket')) {
-                    cache.get('socket').broadcast.emit('user.joined',users[i].name);
-                }
-                res.json({exists:true,login:true,access:users[i].access});
+                 res.json({exists:true,login:true,access:users[i].access});
             } else if (users[i].pwd === '') {
                 res.json({exists:true,setpwd:true});
             } else {
@@ -28,37 +25,31 @@ router.get('/user', function(req, res, next) {
         }
     }
     if (!userFound && req.query.user !== '') {
-        var obj = {
-            name: req.query.user,
-            pwd: '',
-            access: 'user'
-        }
-        cache.values['users'].push(obj);
-        res.json({exists:true,setpwd:true});
+        res.json({exists:false,setpwd:true});
     } else if (!userFound) {
         res.json({exists:false});
     }
 });
 
-// set a users password if not already set
+// set a user &/or password if not already set
 router.post('/user', function(req, res, next) {
     var found = -1;
     var username = req.query.user;
-    for (var i = 0; i < cache.values['users'].length; i++) {
-        if (username === cache.values['users'][i].name && cache.values['users'][i].pwd === '') {   
-            cache.values['users'][i].pwd = req.query.pwd;
-            found = i;
-            break;
-        }
-    }
-    if (found >= 0) {
-        if (cache.get('socket')) {
-            cache.get('socket').broadcast.emit('user.joined',username);
-        }
-        res.json({exists:true,login:true,access:cache.values['users'][found].access});
-    } else {
+    var token = req.query.pwd;
+    if (!username || !token) {
         res.json({error:'access denied'});
+        return;
     }
-});
+    var obj = {
+        name: username,
+        pwd: token,
+        access: 'user'
+    }
+    cache.values['users'].push(obj);
+    if (cache.get('socket')) {
+        cache.get('socket').broadcast.emit('user.joined',username);
+    }
+    res.json({exists:true,login:true,access:obj.access});
+ });
 
 module.exports = router;

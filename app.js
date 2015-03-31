@@ -8,10 +8,10 @@ var cache = require('./modules/cache.js');
 app.use(express.static(path.join(__dirname, 'public')));
 
 var index = require('./routes/index');
-var users = require('./routes/users.js');
-var rooms = require('./routes/rooms.js');
 var api = require('./routes/api.js');
-var chat = require('./routes/chat.js');
+var users = require('./modules/users.js');
+var rooms = require('./modules/rooms.js');
+var chat = require('./modules/chat.js');
 
 app.use('/', index);
 app.use('/api/', api);
@@ -21,7 +21,7 @@ io.on('connection', function(socket){
     cache.set('socket',socket);
     socket.on('disconnect', function(data){
         if (socket.user && socket.room) {
-            users.setRoom(socket.user,null);
+            rooms.removeUser(socket.room,socket.user);
             socket.broadcast.to(socket.room).emit('user.list',rooms.userList(socket.room));    
             socket.leave(socket.room);
         }
@@ -32,10 +32,12 @@ io.on('connection', function(socket){
     });
     
     socket.on('room.join', function(data){
-        var currentRoom = users.getRoom(socket.user);
+        var currentRoom = socket.room;
         users.setRoom(socket.user,data);
+        rooms.addUser(data,socket.user);
         socket.room = data;
         if (currentRoom) {
+            rooms.removeUser(currentRoom,socket.user);
             socket.broadcast.to(currentRoom).emit('user.list',rooms.userList(currentRoom));
             socket.leave(currentRoom);
         }
@@ -68,6 +70,7 @@ io.on('connection', function(socket){
         var currentRoom = users.getRoom(socket.user);
         socket.emit('user.registered',currentRoom);  
         console.log('user '+data+' registered');
+        socket.broadcast.emit('user.joined',data);
     });
     
 });

@@ -123,7 +123,7 @@ a {
 }
 .chat-messages-container {
   overflow: auto;
-  height: 30em;
+  height: 33em;
   border-right: 1px solid #d6d6ff;
 }
 .chat-users-container {
@@ -157,7 +157,7 @@ a {
 .chat-message,
 .chat-time {
   display: table-cell;
-  padding: 0.2em !important;
+  padding: 0.5em !important;
 }
 .chat-user {
   font-weight: bold;
