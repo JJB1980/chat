@@ -18,17 +18,18 @@ public/javascripts/app.js
 public/index.html
 
 Application is separated into one containing controller handling the chat and
-messaging, view located in partials/home.html
+messaging, view located in public/partials/home.html
 Directives created for the user login, rooms list, and styled input box. 
 io Service interfaces to socket.io.  
 
 # node
 Application root is in app.js with code separated functionally into components
 under modules/
-Data is persited in json files under modules/data.js.  Writing is done every 
+Data is persited in json files under modules/data.  Writing is done every 
 N minutes so as to minimise disc writes (improving performance).
 Only the last 50 messages per chat room are saved to reduce file size.
-Rooms can be found under modules/data/rooms.json, rooms can be added/removed here.
+Rooms can be found under modules/data/rooms.json, rooms can be manually
+added/removed here.
 Users are stored with name, password and access (was hoping to add some moderation)
 under modules/data/users.json
 Data is cached in memory using a singleton with api to set and get nodes. These
