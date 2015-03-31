@@ -26,7 +26,7 @@ function userLeave(socket) {
         socket.leave(socket.room);
         socket.room = null;
     }   
-    if ( socket.user ) {
+    if (socket.user) {
         console.log(socket.user+' disconnected');
         io.sockets.emit('user.left',socket.user);  
         socket.leave(socket.user+'.messages');
@@ -66,7 +66,6 @@ io.on('connection', function(socket){
         if (chat.length >= 50) {
             chat.shift();
         }
-        var d = new Date();
         var msg = {
             time: utils.dateTime(),
             msg: data,
@@ -89,24 +88,23 @@ io.on('connection', function(socket){
         io.sockets.in(toUser+'.messages').emit('pm.new',msg);
     });
 
-    socket.on('chat.pm.delete',function (data) {
-        chat.deletePM(socket.user,data);
+    socket.on('chat.pm.delete',function (id) {
+        chat.deletePM(socket.user,id);
     });
     
-    socket.on('chat.pm.read',function (data) {
-        chat.readPM(socket.user,data);
+    socket.on('chat.pm.read',function (id) {
+        chat.readPM(socket.user,id);
     });
 
-    socket.on('user.register', function(data){
+    socket.on('user.register', function(user){
         userLeave(socket);
-        socket.user = data;
-        var currentRoom = users.getRoom(socket.user);
-        socket.emit('user.registered',currentRoom);  
-        console.log('user '+data+' registered');
-        socket.broadcast.emit('user.joined',data);
+        socket.user = user;
+        socket.emit('user.registered',users.getRoom(user));  
+        console.log('user '+user+' registered');
+        socket.broadcast.emit('user.joined',user);
         // channel for messaging user
-        socket.join(socket.user+'.messages');
-        socket.emit('pm.list',chat.PMList(socket.user));
+        socket.join(user+'.messages');
+        socket.emit('pm.list',chat.PMList(user));
     });
     
 });

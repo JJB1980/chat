@@ -180,18 +180,6 @@ app.service('store', function () {
     };
 });
 
-app.service('cache', function () {
-    return {
-        values: [],
-        set: function (key,value) {
-            this.values[key] = value;
-        },
-        get: function (key) {
-            return this.values[key];
-        }
-    };
-});
-
 // interface to server api
 app.factory('comms', function ($rootScope, $http) {
     
