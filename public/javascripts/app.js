@@ -38,14 +38,22 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
     
     $scope.chat = [];
     $scope.users = [];
+    $scope.username = '';
+    $scope.unread = 0;
+    $scope.showChat = true;
+    $scope.pm = [];
+    $scope.currentRoom = '';
+
+    $scope.showMessages = function () {
+        $scope.showChat = !$scope.showChat;
+    }
     
     // send chat message or whisper
     $scope.submitComment = function () {
         if (utils.ok($scope.comment)) {
-//            console.log($scope.comment);    
-//            utils.info('Message sent.');
             if (utils.ok($scope.pmUser)) {
                 io.emit('chat.pm',{user:$scope.pmUser,msg:$scope.comment});
+                $scope.cancelWhisper();
             } else {
                 io.emit('chat.message',$scope.comment);
             }
@@ -53,7 +61,25 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
         }
     };
 
-    $scope.currentRoom = '';
+    $scope.PMDelete = function (msg,index) {
+        io.emit('chat.pm.delete',msg.id);
+        $scope.pm.splice(index,1);
+    };
+    
+    $scope.PMRead = function (msg) {
+        io.emit('chat.pm.read',msg.id);
+        msg.read = true;
+        $scope.unreadMessages();
+    };
+    
+    $scope.unreadMessages = function () {
+        $scope.unread = 0;
+        $scope.pm.forEach(function (pm) {
+            if (!pm.read) {
+                $scope.unread++;
+            }
+        });
+    };
     
     // change room
     $rootScope.$on('room.change',function (event, room) {
@@ -62,10 +88,34 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
         $scope.currentRoom = room;
     });
 
+    // update scope user
+    $rootScope.$on('user.login',function (event, user) {
+        $scope.username = user;
+    });
+
     // display list of users in current room
     io.socket.on('user.list',function (data) {
         console.log('user.list updated');
+        console.log(data);
         $scope.users = data;
+        $scope.$apply();
+    });
+
+    // list of users personal messages
+    io.socket.on('pm.list',function (data) {
+        console.log('pm.list updated');
+        console.log(data)
+        $scope.pm = data;
+        $scope.unreadMessages();
+        $scope.$apply();
+    });
+    
+    // receive new pm
+    io.socket.on('pm.new',function (data) {
+        console.log('pm.new');
+        console.log(data);
+        $scope.pm.push(data);
+        $scope.unreadMessages();
         $scope.$apply();
     });
 
@@ -88,7 +138,7 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
      
     // start whisper user process
     $scope.whisperUser = function (toUser) {
-        if (store.get('username') === toUser) {
+        if ($scope.username === toUser) {
             return;
         }
         $scope.pmUser = toUser;
@@ -145,7 +195,6 @@ app.service('cache', function () {
 // interface to server api
 app.factory('comms', function ($rootScope, $http) {
     
-//    var host = 'http://localhost:3000/api/';
     var host = window.location.origin + '/api/';
     
     var obj = {
@@ -219,10 +268,12 @@ app.directive('myRooms',function () {
             };
             // set room if stored on server
             io.socket.on('user.registered',function (event,data) {
+                console.log('user.registered');
+                console.log(data);
                 var found = false;
                 if (data) {
                     for (var i = 0; i < $scope.rooms.length; i++) {
-                        if ($scope.rooms[i].name === data.room) {
+                        if ($scope.rooms[i].name === data) {
                             $scope.changeRoom($scope.rooms[i],i);
                             found = true;
                             break;
@@ -266,6 +317,7 @@ app.directive('myUser',function () {
             $scope.username = store.get('username') || '';
             $scope.pwd = store.get('pwd') || '';
             $scope.pword = '';
+            $scope.setpwd = false;
             // call from user name input
             $scope.updateUsername = function () {
                 console.log($scope.username);
@@ -273,9 +325,10 @@ app.directive('myUser',function () {
                 if (!utils.ok($scope.username)) {
                     $scope.errors.username = true;
                 } else {
-                    $scope.authenticate();
+//                    $scope.authenticate();
+                    $scope.pword = '';
+                    $scope.auth = false;
                 }
-                store.set('username',$scope.username);
             };
             // call from enter keypress on password input.
             $scope.changePassword = function () {
@@ -285,19 +338,40 @@ app.directive('myUser',function () {
                     $scope.errors.password = true;
                 } else {
                     $scope.pwd = window.btoa($scope.username+':'+$scope.pword);
+                    store.set('username',$scope.username);
                     store.set('pwd',$scope.pwd);
-                    comms.pwd($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
-                        $scope.auth = true;
-                        store.set('access',response.access);
-                    });
+                    if ($scope.setpwd) {
+                        comms.pwd($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
+                            console.log('user.pwd');
+                            console.log($scope.username);
+                            console.log(response);
+
+                            if (response.exists && response.login) {
+                                $scope.auth = true;
+                                $scope.setpwd = false;
+                                store.set('access',response.access);
+                                io.emit('user.register',$scope.username);
+                                $rootScope.$broadcast('user.login',$scope.username);
+                           } else {
+                                utils.warn('No such user');
+                                return;
+                           }
+                        });
+                    } else {
+                        $scope.authenticate();
+                    }
                 }               
             };
             // authenticate user to server.  display messages on exceptions
             $scope.authenticate = function () {
                 comms.connect($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
-//                    console.log(response);
+                    console.log('user.authenticate');
+                    console.log($scope.username);
+                    console.log(response);
+                    
                     $scope.auth = false;
                     if (response.exists && response.setpwd) {
+                        $scope.setpwd = true;
                         utils.warn('Set your password');
                         return;
                     } else if (response.exists && !response.login ) {
@@ -305,6 +379,7 @@ app.directive('myUser',function () {
                         return;
                     }
                     if (!response.exists) {
+                        $scope.setpwd = true;
                         utils.warn('No such user');
                         return;
                     }
@@ -312,6 +387,7 @@ app.directive('myUser',function () {
                         $scope.auth = true;
                         store.set('access',response.access);
                         io.emit('user.register',$scope.username);
+                        $rootScope.$broadcast('user.login',$scope.username);
                     }
                 }).error(function (response) {
                     console.log(response);
@@ -343,10 +419,10 @@ app.directive('myInput',function () {
             $scope.myicon = $attrs.myicon;
             $scope.myholder = $attrs.myholder;
             $scope.mytype = $attrs.mytype;
-//            $scope.$watch('myerror',function () {
+            $scope.$watch('myerror',function () {
 //                console.log('myerror: '+$scope.myerror);
-//                $scope.thiserror = $scope.myerror
-//            }); 
+                $scope.thiserror = $scope.myerror
+            }); 
         },
         link: function (scope, element, attrs) {
             // apply some styling and animation on focus
@@ -375,10 +451,11 @@ app.directive('myInput',function () {
                 }
             }); 
             // catch enter and escape on keypress and call callback function if present.
-            element.find('.my-input').bind("keydown keypress", function (event) {
+            element.find('.my-input').bind("keydown", function (event) {
                 if(event.which === 13 && scope.myenter) {
+                    console.log('keydown.enter');
                     scope.$apply(function (){
-                        scope.myvalue = element.find('.my-input').val();
+                        //scope.myvalue = element.find('.my-input').val();
                         scope.myenter();
                     });
                     event.preventDefault();
@@ -387,10 +464,11 @@ app.directive('myInput',function () {
                         scope.myvalue = '';
                         scope.myescape();
                     });
+                    event.preventDefault();
                 } else {
-                    scope.$apply(function (){
-                       scope.myvalue = element.find('.my-input').val();
-                    });
+//                    scope.$apply(function (){
+//                       scope.myvalue = element.find('.my-input').val();
+//                    });
                 }
             });
         }

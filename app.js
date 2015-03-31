@@ -3,7 +3,6 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
-var cache = require('./modules/cache.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -12,23 +11,35 @@ var api = require('./routes/api.js');
 var users = require('./modules/users.js');
 var rooms = require('./modules/rooms.js');
 var chat = require('./modules/chat.js');
+var cache = require('./modules/cache.js');
+var utils = require('./modules/utils.js');
 
+// route to index page.
 app.use('/', index);
+// route to some api calls for user login etc.
 app.use('/api/', api);
 
+function userLeave(socket) {
+    if (socket.user && socket.room) {
+        rooms.removeUser(socket.room,socket.user);
+        socket.broadcast.to(socket.room).emit('user.list',rooms.userList(socket.room));    
+        socket.leave(socket.room);
+        socket.room = null;
+    }   
+    if ( socket.user ) {
+        console.log(socket.user+' disconnected');
+        io.sockets.emit('user.left',socket.user);  
+        socket.leave(socket.user+'.messages');
+        socket.user = null;
+    }    
+}
+
+// socket connection and events.
 io.on('connection', function(socket){
 //    console.log('a user connected'); 
     cache.set('socket',socket);
     socket.on('disconnect', function(data){
-        if (socket.user && socket.room) {
-            rooms.removeUser(socket.room,socket.user);
-            socket.broadcast.to(socket.room).emit('user.list',rooms.userList(socket.room));    
-            socket.leave(socket.room);
-        }
-        console.log(socket.user+' disconnected');
-        if ( socket.user ) {
-            io.sockets.emit('user.left',socket.user);  
-        }
+        userLeave(socket);
     });
     
     socket.on('room.join', function(data){
@@ -43,7 +54,8 @@ io.on('connection', function(socket){
         }
         socket.join(data);
         io.sockets.in(socket.room).emit('user.list',rooms.userList(data));  
-        io.sockets.in(socket.room).emit('chat.history',cache.get(data+'.chat'));          
+//        io.sockets.in(socket.room).emit('chat.history',cache.get(data+'.chat'));   
+        socket.emit('chat.history',cache.get(data+'.chat'));   
         console.log(socket.user+' joined ' + data);
     });
 
@@ -56,7 +68,7 @@ io.on('connection', function(socket){
         }
         var d = new Date();
         var msg = {
-            time: d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+' '+(d.getHours())+':'+d.getMinutes()+':'+d.getSeconds(),
+            time: utils.dateTime(),
             msg: data,
             user: socket.user
         };
@@ -65,26 +77,50 @@ io.on('connection', function(socket){
         io.sockets.in(socket.room).emit('chat.update',msg); 
     });
     
+    socket.on('chat.pm',function (data) {
+        var toUser = data.user;
+        var msg = {
+            msg: data.msg,
+            time: utils.dateTime(),
+            from: socket.user,
+            read: false
+        }
+        chat.newPM(toUser,msg);
+        io.sockets.in(toUser+'.messages').emit('pm.new',msg);
+    });
+
+    socket.on('chat.pm.delete',function (data) {
+        chat.deletePM(socket.user,data);
+    });
+    
+    socket.on('chat.pm.read',function (data) {
+        chat.readPM(socket.user,data);
+    });
+
     socket.on('user.register', function(data){
+        userLeave(socket);
         socket.user = data;
         var currentRoom = users.getRoom(socket.user);
         socket.emit('user.registered',currentRoom);  
         console.log('user '+data+' registered');
         socket.broadcast.emit('user.joined',data);
+        // channel for messaging user
+        socket.join(socket.user+'.messages');
+        socket.emit('pm.list',chat.PMList(socket.user));
     });
     
 });
 
 http.listen(3000, function(){
-  console.log('listening on *:3000');
+    console.log('listening on *:3000');
 });
 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
@@ -92,22 +128,23 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.json({
-      message: err.message,
-      error: err
+    app.use(function(err, req, res, next) {
+        console.log(err);
+        res.status(err.status || 500);
+        res.json({
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     console.log(err);
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {}
-  });
+    res.status(err.status || 500);
+    res.json({
+        message: err.message,
+        error: {}
+    });
 });

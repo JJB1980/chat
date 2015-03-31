@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var cache = require('../modules/cache.js');
 
+// get rooms
 router.get('/rooms', function(req, res, next) {
     res.json({data: cache.get('rooms')});
 });

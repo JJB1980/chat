@@ -6,17 +6,19 @@ h4,
 h2,
 h3,
 h5 {
-  color: #3366FF !important;
+  color: #3366ff !important;
 }
 a {
-  color: #00B7FF;
+  color: #3366ff !important;
 }
+/* common classes */
 .hide {
   dispaly: none;
 }
 .hand {
   cursor: pointer;
 }
+/* Page layout */
 #content-container {
   min-height: 100%;
   width: 1000px;
@@ -40,6 +42,11 @@ a {
   min-height: 100%;
   /*    background-color: green;*/
 }
+.my-user {
+  border-bottom: 1px solid #d6d6ff;
+  padding-bottom: 2em;
+}
+/* myInput directive */
 .input-icon {
   width: 10%;
   color: #1f1f99;
@@ -47,10 +54,6 @@ a {
   font-size: 1.2em !important;
   position: relative;
   top: 0.2em;
-}
-.my-user {
-  border-bottom: 1px solid #d6d6ff;
-  padding-bottom: 2em;
 }
 .my-input-container {
   padding-top: 0.5em;
@@ -91,6 +94,7 @@ a {
   margin-right: auto;
   min-height: 100%;
 }
+/* rooms and navigate rooms on small screens */
 .rooms-nav {
   display: inline-block;
   width: 100%;
@@ -115,6 +119,7 @@ a {
 .current-room {
   font-weight: bold;
 }
+/* chat messages and user list */
 .chat-messages {
   width: 100%;
   min-height: 75%;
@@ -144,19 +149,28 @@ a {
   width: 100%;
   min-height: 5em;
 }
-.chat-table {
-  display: table;
-  margin-top: 0.5em;
+.chat-bar-comment {
+  width: 70%;
+  float: left;
+}
+.chat-bar-actions {
+  width: 28%;
+  float: left;
+  padding-top: 0.5em;
+  font-size: 1.5em;
 }
 .chat-row {
   width: 100%;
   padding: 0.2em;
-  display: table-row;
+  position: relative;
+}
+.chat-row:hover {
+  background-color: #F0F0F5;
 }
 .chat-user,
 .chat-message,
-.chat-time {
-  display: table-cell;
+.chat-time,
+pm-actions {
   padding: 0.5em !important;
 }
 .chat-user {
@@ -164,15 +178,33 @@ a {
   font-size: 0.8em;
   font-style: italic;
   width: 20%;
+  padding-left: 2em !important;
 }
 .chat-message {
   font-family: tahoma;
-  font-size: 0.9em;
+  font-size: 1em;
   width: 60%;
 }
 .chat-time {
   font-size: 0.7em !important;
+  font-style: italic;
 }
+.pm-row {
+  padding: 0.5em;
+}
+.pm-action {
+  padding: 0.5em;
+  font-size: 1.2em;
+}
+.message-sep {
+  border-top: 1px solid #d6d6ff;
+}
+.unread {
+  font-size: 0.6em !important;
+  position: relative;
+  top: -0.2em;
+}
+/* resize containers on smaller screens */
 @media (max-width: 1000px) {
   #left-container {
     min-height: 8em;
@@ -187,6 +219,7 @@ a {
     width: 99%;
     min-height: 20em !important;
     border-bottom: 1px solid #d6d6ff;
+    padding-left: 0.5em !important;
   }
   .chat-bar {
     width: 99%;
@@ -195,5 +228,8 @@ a {
   .chat-messages-container,
   .chat-users-container {
     height: 20em;
+  }
+  .chat-message {
+    padding-left: 2em !important;
   }
 }

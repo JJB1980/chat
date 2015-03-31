@@ -3,7 +3,7 @@ var data = require('../modules/data.js');
 
 var obj = {};
 
-
+// store the user's room
 obj.setRoom = function (user,room) {
     var users = cache.get('users');
     for (var i = 0; i < users.length; i++) {
@@ -15,6 +15,7 @@ obj.setRoom = function (user,room) {
     cache.set('users',users);
 };
 
+// get the users's room
 obj.getRoom = function (user) {
     var users = cache.get('users');
 //    console.log(users);

@@ -1,4 +1,4 @@
-
+// memory singleton for storing data.
 var obj = {
     values: [],
     set: function (key,data) {

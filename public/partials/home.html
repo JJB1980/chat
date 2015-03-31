@@ -8,32 +8,66 @@
     </div>
 
     <div class="col-md-9 col-sm-12" id="right-container">
-        <div class="chat-messages">
+        <div class="chat-messages" ng-show="showChat">
             <h4>Current Room: <i>{{currentRoom}}</i></h4>
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container">
-                    <div class="chat-table">
-                        <div class="chat-row" data-ng-repeat="msg in chat">
-                            <div class="chat-time">{{msg.time}}</div>
-                            <div class="chat-user hand" data-ng-click="whisperUser(msg.user)"
-                                 lx-tooltip="Whisper User" tooltip-position="bottom">{{msg.user}}</div>
-                            <div class="chat-message">{{msg.msg}}</div>
+                     <div class="row chat-row" data-ng-repeat="msg in chat"  ng-class="{ 'message-sep': $index > 0 }">
+                        <div class="col-md-2 col-sm-2 col-xs-6 chat-user">
+                           <span data-ng-show="username!==msg.user" lx-tooltip="Whisper User" class="hand" 
+                                  tooltip-position="bottom"  data-ng-click="whisperUser(msg.user)">{{msg.user}}</span>
+                            <span data-ng-show="username===msg.user">{{msg.user}}</span>
                         </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 chat-time">{{msg.time}}</div>
+                        <div class="col-md-6 col-sm-6 col-xs-12 chat-message">{{msg.msg}}</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
                     <h5>Users</h5>
                     <ul>
-                        <li data-ng-repeat="user in users track by $index" class="hand" data-ng-click="whisperUser(user)"
-                            lx-tooltip="Whisper User" tooltip-position="bottom">{{user}}</li>
+                        <li data-ng-repeat="user in users track by $index">
+                            <span data-ng-show="username!==user" lx-tooltip="Whisper User" class="hand" 
+                                  tooltip-position="bottom"  data-ng-click="whisperUser(user)">{{user}}</span>
+                            <span data-ng-show="username===user">{{user}}</span>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
+        <div class="chat-messages" ng-show="!showChat">
+            <h4>My Messages</h4>
+            <div class="row chat-row" data-ng-repeat="msg in pm" ng-class="{ 'message-sep': $index > 0 }">
+                <div class="col-md-2 col-sm-2 col-xs-3 chat-user hand" lx-tooltip="Whisper User" 
+                                  tooltip-position="bottom"  data-ng-click="whisperUser(msg.from)">{{msg.from}}</div>
+                <div class="col-md-2 col-sm-2 col-xs-3 chat-time">{{msg.time}}</div>
+                <div ng-show="msg.read" class="col-md-2 col-sm-2 col-xs-3 chat-time">Read</div>
+                <div ng-show="!msg.read" class="col-md-2 col-sm-2 col-xs-3 chat-time">New</div>
+                <div class="col-md-4 col-md-4 col-md-9 chat-message">{{msg.msg}}</div>
+                <div class="col-md-2 col-md-2 col-md-3 pm-actions">
+                    <span lx-tooltip="Delete" tooltip-position="bottom" 
+                          data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand"></span>
+                    <span lx-tooltip="Mark Read" tooltip-position="bottom" 
+                          data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand"></span>
+                    <span lx-tooltip="Reply" tooltip-position="bottom"
+                          data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand"></span>
+                </div>
+            </div>
+        </div>
         <div class="chat-bar">
-            <my-input myvalue="comment" myenter="submitComment" mytype="text" mymessage="whisperTo"
-              myescape="cancelWhisper" myicon="comment" myholder="Comment" bounce="false">
-            </my-input>
+            <div class="chat-bar-comment">
+                <my-input data-myvalue="comment" data-myenter="submitComment" data-mytype="text" data-mymessage="whisperTo"
+                  data-myescape="cancelWhisper" data-myicon="comment" data-myholder="Comment" bounce="false">
+                </my-input>
+            </div>
+            <div class="chat-bar-actions">
+                <span data-ng-show="!showChat" data-ng-click="showMessages()"
+                      lx-tooltip="Return to chat" tooltip-position="top" class="mdi mdi-redo hand"></span>            
+                <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
+                      lx-tooltip="No Messages" tooltip-position="top" class="mdi mdi-email-outline hand"></span>
+                <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
+                      lx-tooltip="Read Messages" tooltip-position="top" class="mdi mdi-email hand"></span>
+                <span data-ng-show="unread>0&&showChat" class="unread">({{unread}})</span>
+            </div>
         </div>
     </div>
 

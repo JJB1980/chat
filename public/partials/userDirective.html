@@ -1,11 +1,11 @@
 <div class="my-user" ng-class="{ 'validate-error': errors.username }">
 
-    <my-input myvalue="username" myenter="updateUsername" mytype="text"
+    <my-input myvalue="username" mychange="updateUsername" mytype="text"
               myicon="account" myerror="errors.username"
               myholder="Username" bounce="false"></my-input>
     
     <my-input myvalue="pword" myenter="changePassword" mytype="password"
-            myicon="key" myerror="errors.password" ng-show="!auth" 
+            myicon="key" myerror="errors.password" data-ng-show="!auth" 
             myholder="Password" bounce="false"></my-input>
 
 </div>

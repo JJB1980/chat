@@ -10,7 +10,7 @@ gulp.task('less', function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch('public/stylesheets/style.less', ['less']);  // Watch all the .less files, then run the less task
+    gulp.watch('public/stylesheets/style.less', ['less']);  // Watch the .less file, then run the less task
 });
 
-gulp.task('default', ['less','watch']); // Default will run the 'entry' watch task
+gulp.task('default', ['less','watch']); // Default will run the 'less' and 'watch' task
