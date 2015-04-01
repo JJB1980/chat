@@ -443,20 +443,12 @@ app.directive('myInput',function () {
 //                console.log(event);
                 if(event.which === 13 && scope.myenter) {
                     console.log('key.enter');
-                    setTimeout(function () {
+//                    setTimeout(function () {
                         scope.$apply(function (){
                             scope.myvalue = element.find('.my-input').val();
                             scope.myenter();
                         });
-                    },50);
-                    event.preventDefault();
-                } else if (event.which === 27 && scope.myescape) {
-                    setTimeout(function () {
-                        scope.$apply(function (){
-                            scope.myvalue = '';
-                            scope.myescape();
-                        });
-                    });
+//                    },50);
                     event.preventDefault();
                 } else {
                     setTimeout(function () {
@@ -468,6 +460,16 @@ app.directive('myInput',function () {
                             }
                         });
                     },50);
+                }
+            });
+            element.find('.my-input').bind("keyup", function (event) {
+                if (event.which === 27 && scope.myescape) {
+                    console.log('key.esc');
+                    scope.$apply(function (){
+                        scope.myvalue = '';
+                        scope.myescape();
+                    });
+                    event.preventDefault();
                 }
             });
         }
