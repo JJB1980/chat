@@ -60,6 +60,9 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat.message',function (data) {
+        if (!socket.user) {
+            return;
+        }
         console.log(socket.user+'@'+socket.room+':'+data);
         var chat = cache.get(socket.room+'.chat') || [];
         // only keep the last 50 messages;
@@ -77,6 +80,9 @@ io.on('connection', function(socket){
     });
     
     socket.on('chat.pm',function (data) {
+        if (!socket.user) {
+            return;
+        }
         var toUser = data.user;
         var msg = {
             msg: data.msg,
@@ -89,15 +95,24 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat.pm.delete',function (id) {
+        if (!socket.user) {
+            return;
+        }
         chat.deletePM(socket.user,id);
     });
     
     socket.on('chat.pm.read',function (id) {
+        if (!socket.user) {
+            return;
+        }
         chat.readPM(socket.user,id);
     });
 
     socket.on('user.register', function(user){
         userLeave(socket);
+        if (!user) {
+            return;
+        }
         socket.user = user;
         socket.emit('user.registered',users.getRoom(user));  
         console.log('user '+user+' registered');

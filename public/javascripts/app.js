@@ -401,9 +401,9 @@ app.directive('myInput',function () {
             myescape: '=myescape'
         },
         controller: function ($scope, $attrs) {
-            if ($attrs.bounce) {
-                $scope.bounce = { debounce: {'default': 500, 'blur': 0} };
-            }
+//            if ($attrs.bounce) {
+//                $scope.bounce = { debounce: {'default': 500, 'blur': 0} };
+//            }
             $scope.myicon = $attrs.myicon;
             $scope.myholder = $attrs.myholder;
             $scope.mytype = $attrs.mytype;
@@ -412,7 +412,7 @@ app.directive('myInput',function () {
                 $scope.thiserror = $scope.myerror
             }); 
         },
-        link: function (scope, element, attrs) {
+        link: function (scope, element, attrs, timeout) {
             // apply some styling and animation on focus
             element.find('.my-input').focus(function () { 
 //                console.log(element);
@@ -439,24 +439,35 @@ app.directive('myInput',function () {
                 }
             }); 
             // catch enter and escape on keypress and call callback function if present.
-            element.find('.my-input').bind("keydown", function (event) {
+            element.find('.my-input').bind("keypress", function (event) {
+//                console.log(event);
                 if(event.which === 13 && scope.myenter) {
-                    console.log('keydown.enter');
-                    scope.$apply(function (){
-                        //scope.myvalue = element.find('.my-input').val();
-                        scope.myenter();
-                    });
+                    console.log('key.enter');
+                    setTimeout(function () {
+                        scope.$apply(function (){
+                            scope.myvalue = element.find('.my-input').val();
+                            scope.myenter();
+                        });
+                    },50);
                     event.preventDefault();
                 } else if (event.which === 27 && scope.myescape) {
-                    scope.$apply(function (){
-                        scope.myvalue = '';
-                        scope.myescape();
+                    setTimeout(function () {
+                        scope.$apply(function (){
+                            scope.myvalue = '';
+                            scope.myescape();
+                        });
                     });
                     event.preventDefault();
                 } else {
-//                    scope.$apply(function (){
-//                       scope.myvalue = element.find('.my-input').val();
-//                    });
+                    setTimeout(function () {
+                        scope.$apply(function (){
+                            console.log('val:'+element.find('.my-input').val());
+                            scope.myvalue = element.find('.my-input').val(); // + String.fromCharCode(event.which);
+                            if (scope.mychange) {
+                                scope.mychange();
+                            }
+                        });
+                    },50);
                 }
             });
         }
