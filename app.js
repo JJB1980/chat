@@ -72,7 +72,7 @@ io.on('connection', function(socket){
             return;
         }
         var msg = users.newPM(socket.user,data);
-        io.sockets.in(toUser+'.messages').emit('pm.new',msg);
+        io.sockets.in(data.user+'.messages').emit('pm.new',msg);
     });
 
     socket.on('chat.pm.delete',function (id) {
