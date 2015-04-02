@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var cache = require('../modules/cache.js');
 var utils = require('../modules/utils.js');
+var _users = require('../modules/users.js');
 
 // get rooms
 router.get('/rooms', function(req, res, next) {
@@ -19,6 +20,7 @@ router.get('/user', function(req, res, next) {
             if ((req.query.pwd === users[i].pwd) || (req.query.token === users[i].token)) {
                 users[i].token = utils.uuid();
                 cache.set('users',users);
+                _users.saveUsers();
                 res.json({
                     exists: true,
                     login: true,
@@ -57,7 +59,9 @@ router.post('/user', function(req, res, next) {
         token: token
     }
     cache.values['users'].push(obj);
+    _users.saveUsers();
     cache.set(user.name+'.messages',[]);
+    _users.saveMessages(user.name);
     if (cache.get('socket')) {
         cache.get('socket').broadcast.emit('user.joined',username);
     }

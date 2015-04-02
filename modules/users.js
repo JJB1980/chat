@@ -107,8 +107,8 @@ function loadUserMessages(data) {
     data.forEach(function (user) {
         _data.read('messages/'+user.name+'.json').then(function (data2) {
             cache.set(user.name+'.messages',data2.data);
-            console.log(user.name+'.messages');
-            console.log(data2.data);
+//            console.log(user.name+'.messages');
+//            console.log(data2.data);
         //    console.log(data);
         }, function (err) {
             console.log(err);
@@ -117,7 +117,7 @@ function loadUserMessages(data) {
     });    
 }
 
-setInterval(function () {
+obj.saveUsers = function () {
     try {
 //        console.log('write users');
         var arr = cache.values['users'];
@@ -129,7 +129,7 @@ setInterval(function () {
         });    
     } catch(err) {
         console.log(err);
-    }
-},(60000*1));
+    }    
+};
 
 module.exports = obj;

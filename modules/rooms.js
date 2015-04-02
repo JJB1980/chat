@@ -19,9 +19,9 @@ _data.read('rooms.json').then(function (data) {
 function loadRoomChat(data) {
     data.forEach(function (room) {
         _data.read('chat/'+room.name+'.json').then(function (data2) {
-            console.log('rooms.load');
-            console.log(room);
-            console.log(data2.data);
+//            console.log('rooms.load');
+//            console.log(room);
+//            console.log(data2.data);
             cache.set(room.name+'.chat',data2.data);
         //    console.log(data);
         }, function (err) {
