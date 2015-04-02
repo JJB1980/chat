@@ -10,9 +10,7 @@ var index = require('./routes/index');
 var api = require('./routes/api.js');
 var users = require('./modules/users.js');
 var rooms = require('./modules/rooms.js');
-var chat = require('./modules/chat.js');
 var cache = require('./modules/cache.js');
-var utils = require('./modules/utils.js');
 
 // route to index page.
 app.use('/', index);
@@ -64,33 +62,16 @@ io.on('connection', function(socket){
             return;
         }
         console.log(socket.user+'@'+socket.room+':'+data);
-        var chat = cache.get(socket.room+'.chat') || [];
-        // only keep the last 50 messages;
-        if (chat.length >= 50) {
-            chat.shift();
-        }
-        var msg = {
-            time: utils.dateTime(),
-            msg: data,
-            user: socket.user
-        };
-        chat.push(msg);
-        cache.set(socket.room+'.chat',chat)
+        var msg = rooms.addMessage(socket.room,socket.user,data);
         io.sockets.in(socket.room).emit('chat.update',msg); 
+        rooms.saveMessages(socket.room);
     });
     
     socket.on('chat.pm',function (data) {
         if (!socket.user) {
             return;
         }
-        var toUser = data.user;
-        var msg = {
-            msg: data.msg,
-            time: utils.dateTime(),
-            from: socket.user,
-            read: false
-        }
-        chat.newPM(toUser,msg);
+        var msg = users.newPM(socket.user,data);
         io.sockets.in(toUser+'.messages').emit('pm.new',msg);
     });
 
@@ -98,14 +79,14 @@ io.on('connection', function(socket){
         if (!socket.user) {
             return;
         }
-        chat.deletePM(socket.user,id);
+        users.deletePM(socket.user,id);
     });
     
     socket.on('chat.pm.read',function (id) {
         if (!socket.user) {
             return;
         }
-        chat.readPM(socket.user,id);
+        users.readPM(socket.user,id);
     });
 
     socket.on('user.register', function(user){
@@ -119,7 +100,7 @@ io.on('connection', function(socket){
         socket.broadcast.emit('user.joined',user);
         // channel for messaging user
         socket.join(user+'.messages');
-        socket.emit('pm.list',chat.PMList(user));
+        socket.emit('pm.list',users.PMList(user));
     });
     
 });
