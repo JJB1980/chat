@@ -8,9 +8,6 @@ cache.set('room.users', []);
 
 // load rooms data, and chat data to cache
 _data.read('rooms.json').then(function (data) {
-    if (!data || !data.data) {
-        data.data = [];
-    }
     cache.set('rooms',data.data);
     loadRoomChat(data.data);    
 //    console.log(data);
@@ -24,10 +21,7 @@ function loadRoomChat(data) {
         _data.read('chat/'+room.name+'.json').then(function (data2) {
             console.log('rooms.load');
             console.log(room);
-            console.log(data2);
-            if (!data2 || !data2.data) {
-                data2.data = [];
-            }
+            console.log(data2.data);
             cache.set(room.name+'.chat',data2.data);
         //    console.log(data);
         }, function (err) {
@@ -50,7 +44,7 @@ obj.addMessage = function (room,user,data) {
     };   
     chat.push(msg);
     cache.set(room+'.chat',chat)
-    rooms.saveMessages(room);
+    obj.saveMessages(room);
     return msg;
 };
 

@@ -54,9 +54,10 @@ router.post('/user', function(req, res, next) {
         name: username,
         pwd: token,
         access: 'user',
-        token: users[i].token
+        token: token
     }
     cache.values['users'].push(obj);
+    cache.set(user.name+'.messages',[]);
     if (cache.get('socket')) {
         cache.get('socket').broadcast.emit('user.joined',username);
     }

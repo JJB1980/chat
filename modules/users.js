@@ -106,21 +106,20 @@ _data.read('users.json').then(function (data) {
 function loadUserMessages(data) {
     data.forEach(function (user) {
         _data.read('messages/'+user.name+'.json').then(function (data2) {
-            if (!data2 || !data2.data) {
-                data2.data = [];
-            }
             cache.set(user.name+'.messages',data2.data);
+            console.log(user.name+'.messages');
+            console.log(data2.data);
         //    console.log(data);
         }, function (err) {
             console.log(err);
-            cache.set(room.name+'.chat',[]);
+            cache.set(user.name+'.messages',[]);
         });       
     });    
 }
 
 setInterval(function () {
     try {
-        console.log('write users');
+//        console.log('write users');
         var arr = cache.values['users'];
         var dat = {data: arr};
         _data.write('users.json',dat).then(function (response) {

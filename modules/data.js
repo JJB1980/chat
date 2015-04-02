@@ -18,10 +18,10 @@ obj.read = function (filename) {
             }
             console.log('OK: ' + filename);
             console.log(data);
-            if (data) {
+            if (data !== undefined && data) {
                 resolve(JSON.parse(data));
             } else {
-                resolve({});
+                resolve({data:[]});
             }
         });
     });
