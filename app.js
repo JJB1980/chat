@@ -64,7 +64,6 @@ io.on('connection', function(socket){
         console.log(socket.user+'@'+socket.room+':'+data);
         var msg = rooms.addMessage(socket.room,socket.user,data);
         io.sockets.in(socket.room).emit('chat.update',msg); 
-        rooms.saveMessages(socket.room);
     });
     
     socket.on('chat.pm',function (data) {

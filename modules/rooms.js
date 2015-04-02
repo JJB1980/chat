@@ -12,9 +12,7 @@ _data.read('rooms.json').then(function (data) {
         data.data = [];
     }
     cache.set('rooms',data.data);
-    setTimeout(function () {
-        loadRoomChat(data.data);    
-    },100);
+    loadRoomChat(data.data);    
 //    console.log(data);
 }, function (err) {
     console.log(err);
@@ -52,6 +50,7 @@ obj.addMessage = function (room,user,data) {
     };   
     chat.push(msg);
     cache.set(room+'.chat',chat)
+    rooms.saveMessages(room);
     return msg;
 };
 

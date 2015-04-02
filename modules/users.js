@@ -6,30 +6,28 @@ var obj = {};
 
 // store the user's room
 obj.setRoom = function (user,room) {
-    var users = cache.get('users');
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].name === user) {
-            users[i].room = room;
-            break;
-        }
+    var index = findUser(user);
+    if (index >= 0) {
+        cache.values['users'][index].room = room;
     }
-    cache.set('users',users);
 };
 
 // get the users's room
 obj.getRoom = function (user) {
-    var users = cache.get('users');
-//    console.log(users);
     var room = '';
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].name === user) {
-            room = users[i].room;
-            break;
-        }
-    }
-    return room;
+    var index = findUser(user);
+    return (index >= 0) ? cache.values['users'][index].room : '';
 };
 
+function findUser(name) {
+    var users = cache.get('users');
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].name === name) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 // save user message data to disk
 obj.saveMessages = function (user) {
@@ -43,7 +41,6 @@ obj.saveMessages = function (user) {
 };
 
 obj.newPM = function (from,data) {
-    var msgs = cache.get(toUser+'.messages') || [];
     var toUser = data.user;
     var msg = {
         msg: data.msg,
@@ -51,13 +48,13 @@ obj.newPM = function (from,data) {
         from: from,
         read: false
     }
-    msg.id = msgs.length + 1;
-    msgs.push(msg);
-    cache.set(toUser+'.messages',msgs);
+    msg.id = cache.values[toUser+'.messages'].length + 1;
+    cache.values[toUser+'.messages'].push(msg);
     obj.saveMessages(toUser);
+    return msg;
 };
 
-obj.readPM = function (user,id) {
+function findUserMessage(user,id) {
     var msgs = cache.get(user+'.messages') || [];
     var index = -1;
     for (var i = 0; i < msgs.length; i++) {
@@ -66,25 +63,23 @@ obj.readPM = function (user,id) {
             break;
         }
     }
+    return index;
+}
+
+obj.readPM = function (user,id) {
+    var msgs = cache.get(user+'.messages') || [];
+    var index = findUserMessage(user,id);
     if (index >= 0) {
-        msgs[index].read = true;
-        cache.set(user+'.messages',msgs);
+        cache.values[user+'.messages'][index].read = true;
         obj.saveMessages(user);
     }
 };
 
 obj.deletePM = function (user,id) {
     var msgs = cache.get(user+'.messages') || [];
-    var index = -1;
-    for (var i = 0; i < msgs.length; i++) {
-        if (msgs[i].id === id) {
-            index = i;
-            break;
-        }
-    }
+    var index = findUserMessage(user,id);
     if (index >= 0) {
-        msgs.splice(index,1);
-        cache.set(user+'.messages',msgs);
+        cache.values[user+'.messages'].splice(index,1);
         obj.saveMessages(user);
     }
 };
