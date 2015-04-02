@@ -164,6 +164,9 @@ app.service('utils', function (LxNotificationService) {
         },
         warn: function (message) {
             LxNotificationService.warning(message);
+        },
+        error: function (message) {
+            LxNotificationService.error(message);
         }
     };
 });
@@ -186,8 +189,8 @@ app.factory('comms', function ($rootScope, $http) {
     var host = window.location.origin + '/api/';
     
     var obj = {
-        connect: function (user,pwd) {
-            var url = host+'user?user='+user+'&pwd='+pwd;
+        connect: function (user,pwd,token) {
+            var url = host+'user?user='+user+'&pwd='+pwd+'&token='+token;
             console.log(url);
             return $http.get(url);
         },
@@ -303,10 +306,13 @@ app.directive('myUser',function () {
         controller: function ($scope, $rootScope, store, utils, comms, io) {
             $scope.errors = {};
             $scope.username = store.get('username') || '';
-            $scope.pwd = store.get('pwd') || '';
+            $scope.token = store.get('token') || '';
             $scope.pword = '';
             $scope.setpwd = false;
-            // call from user name input
+            io.socket.on('user.not.authorised',function (event,data) {
+                utils.error('Not authorised.');
+            });
+             // call from user name input
             $scope.updateUsername = function () {
                 console.log($scope.username);
                 $scope.errors.username = false;
@@ -317,17 +323,20 @@ app.directive('myUser',function () {
                     $scope.pword = '';
                     $scope.auth = false;
                 }
-            };
+           };
             // call from enter keypress on password input.
             $scope.changePassword = function () {
+                $scope.errors.username = false;
                 $scope.errors.password = false;
                 console.log($scope.pword);
+                if (!utils.ok($scope.username)) {
+                    $scope.errors.username = true;
+                }
                 if (!utils.ok($scope.pword)) {
                     $scope.errors.password = true;
                 } else {
                     $scope.pwd = window.btoa($scope.username+':'+$scope.pword);
                     store.set('username',$scope.username);
-                    store.set('pwd',$scope.pwd);
                     if ($scope.setpwd) {
                         comms.pwd($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
                             console.log('user.pwd');
@@ -335,15 +344,11 @@ app.directive('myUser',function () {
                             console.log(response);
 
                             if (response.exists && response.login) {
-                                $scope.auth = true;
-                                $scope.setpwd = false;
-                                store.set('access',response.access);
-                                io.emit('user.register',$scope.username);
-                                $rootScope.$broadcast('user.login',$scope.username);
-                           } else {
+                                $scope.validated(response);
+                            } else {
                                 utils.warn('No such user');
                                 return;
-                           }
+                            }
                         });
                     } else {
                         $scope.authenticate();
@@ -352,11 +357,10 @@ app.directive('myUser',function () {
             };
             // authenticate user to server.  display messages on exceptions
             $scope.authenticate = function () {
-                comms.connect($scope.username,($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
+                comms.connect($scope.username,($scope.pwd !== undefined ? $scope.pwd : ''),$scope.token).success(function (response) {
                     console.log('user.authenticate');
                     console.log($scope.username);
-                    console.log(response);
-                    
+                    console.log(response);       
                     $scope.auth = false;
                     if (response.exists && response.setpwd) {
                         $scope.setpwd = true;
@@ -372,14 +376,22 @@ app.directive('myUser',function () {
                         return;
                     }
                     if (response.exists && response.login) {
-                        $scope.auth = true;
-                        store.set('access',response.access);
-                        io.emit('user.register',$scope.username);
-                        $rootScope.$broadcast('user.login',$scope.username);
+                        $scope.validated(response);
                     }
                 }).error(function (response) {
                     console.log(response);
                 });
+            };
+            $scope.validated = function (response) {
+                $scope.auth = true;
+                $scope.setpwd = false;
+                store.set('access',response.access);
+                store.set('token',response.token);
+                io.emit('user.register',{
+                    user: $scope.username,
+                    token: response.token
+                });
+                $rootScope.$broadcast('user.login',$scope.username);           
             };
             if ($scope.username !== '') {
                 $scope.authenticate();
@@ -416,21 +428,21 @@ app.directive('myInput',function () {
             // apply some styling and animation on focus
             element.find('.my-input').focus(function () { 
 //                console.log(element);
-//                if (!element.find('.my-input-container').hasClass('validate-error')) {
+                if (!element.hasClass('validate-error')) {
                     element.find('.input-icon').addClass('focus-icon');
                     element.find('.input-bottom').addClass('focus-bottom');  
 //                    console.log($(element.find('.input-bottom').children()[0]));
                     $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},400,"linear");
-//                }
+                }
             });
             // reset styles and animation on blur
             element.find('.my-input').blur(function () {          
-//                if (!element.find('.my-input-container').hasClass('validate-error')) {          
+                if (!element.hasClass('validate-error')) {          
                     element.find('.input-icon').removeClass('focus-icon');
                     $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '0%'},400,"linear",function() {
                         element.find('.input-bottom').removeClass('focus-bottom'); 
                     });
-//                }
+                }
                 if (scope.myescape) {
                     scope.$apply(function (){
                         scope.myvalue = '';
@@ -443,12 +455,10 @@ app.directive('myInput',function () {
 //                console.log(event);
                 if(event.which === 13 && scope.myenter) {
                     console.log('key.enter');
-//                    setTimeout(function () {
-                        scope.$apply(function (){
-                            scope.myvalue = element.find('.my-input').val();
-                            scope.myenter();
-                        });
-//                    },50);
+                    scope.$apply(function (){
+                        scope.myvalue = element.find('.my-input').val();
+                        scope.myenter();
+                    });
                     event.preventDefault();
                 } else {
                     setTimeout(function () {

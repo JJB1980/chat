@@ -88,18 +88,22 @@ io.on('connection', function(socket){
         users.readPM(socket.user,id);
     });
 
-    socket.on('user.register', function(user){
+    socket.on('user.register', function(data){
         userLeave(socket);
-        if (!user) {
+        if (!data) {
             return;
         }
-        socket.user = user;
-        socket.emit('user.registered',users.getRoom(user));  
-        console.log('user '+user+' registered');
-        socket.broadcast.emit('user.joined',user);
+        if (!users.authorised(data.user,data.token)) {
+            socket.emit('user.not.authorised',data.user);
+            return;
+        }
+        socket.user = data.user;
+        socket.emit('user.registered',users.getRoom(data.user));  
+        console.log('user '+data.user+' registered');
+        socket.broadcast.emit('user.joined',data.user);
         // channel for messaging user
-        socket.join(user+'.messages');
-        socket.emit('pm.list',users.PMList(user));
+        socket.join(data.user+'.messages');
+        socket.emit('pm.list',users.PMList(data.user));
     });
     
 });

@@ -11,7 +11,7 @@ var _dir = __dirname + '/data/';
 obj.read = function (filename) {
     
     var promise = new Promise(function (resolve, reject) {
-        console.log(_dir+filename);
+//        console.log(_dir+filename);
         fs.readFile(_dir+filename, 'utf8', function(err, data) {
             if (err) {
                 reject(err);

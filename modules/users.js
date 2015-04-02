@@ -29,16 +29,10 @@ function findUser(name) {
     return -1;
 }
 
-// save user message data to disk
-obj.saveMessages = function (user) {
-    var arr = cache.values[user+'.messages'];
-    var dat = {data: arr};
-    _data.write('messages/'+user+'.json',dat).then(function (response) {
-//        console.log('user data written.');
-    }, function (err) {
-        console.log(err);
-    });
-};
+obj.authorised = function (user,token) {
+    var index = findUser(user);
+    return (cache.values['users'][index].token === token);
+}
 
 obj.newPM = function (from,data) {
     var toUser = data.user;
@@ -88,6 +82,17 @@ obj.PMList = function (user) {
     return cache.get(user+'.messages') || [];
 };
 
+// save user message data to disk
+obj.saveMessages = function (user) {
+    var arr = cache.values[user+'.messages'];
+    var dat = {data: arr};
+    _data.write('messages/'+user+'.json',dat).then(function (response) {
+//        console.log('user data written.');
+    }, function (err) {
+        console.log(err);
+    });
+};
+
 // load user data, and user message to cache
 _data.read('users.json').then(function (data) {
     cache.set('users',data.data);
@@ -112,5 +117,20 @@ function loadUserMessages(data) {
         });       
     });    
 }
+
+setInterval(function () {
+    try {
+        console.log('write users');
+        var arr = cache.values['users'];
+        var dat = {data: arr};
+        _data.write('users.json',dat).then(function (response) {
+    //        console.log('user data written.');
+        }, function (err) {
+            console.log(err);
+        });    
+    } catch(err) {
+        console.log(err);
+    }
+},(60000*1));
 
 module.exports = obj;

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var cache = require('../modules/cache.js');
+var utils = require('../modules/utils.js');
 
 // get rooms
 router.get('/rooms', function(req, res, next) {
@@ -15,8 +16,15 @@ router.get('/user', function(req, res, next) {
         if (req.query.user === users[i].name) {
             userFound = true;
 //            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
-            if (req.query.pwd === users[i].pwd) {
-                 res.json({exists:true,login:true,access:users[i].access});
+            if ((req.query.pwd === users[i].pwd) || (req.query.token === users[i].token)) {
+                users[i].token = utils.uuid();
+                cache.set('users',users);
+                res.json({
+                    exists: true,
+                    login: true,
+                    access: users[i].access,
+                    token: users[i].token
+                });
             } else if (users[i].pwd === '') {
                 res.json({exists:true,setpwd:true});
             } else {
@@ -41,16 +49,23 @@ router.post('/user', function(req, res, next) {
         res.json({error:'access denied'});
         return;
     }
+    var token = utils.uuid();
     var obj = {
         name: username,
         pwd: token,
-        access: 'user'
+        access: 'user',
+        token: users[i].token
     }
     cache.values['users'].push(obj);
     if (cache.get('socket')) {
         cache.get('socket').broadcast.emit('user.joined',username);
     }
-    res.json({exists:true,login:true,access:obj.access});
+    res.json({
+        exists: true,
+        login: true,
+        access: obj.access,
+        token: token
+    });
  });
 
 module.exports = router;
