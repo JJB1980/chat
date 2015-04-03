@@ -10,7 +10,6 @@ var index = require('./routes/index');
 var api = require('./routes/api.js');
 var users = require('./modules/users.js');
 var rooms = require('./modules/rooms.js');
-var cache = require('./modules/cache.js');
 
 // route to index page.
 app.use('/', index);
@@ -35,7 +34,6 @@ function userLeave(socket) {
 // socket connection and events.
 io.on('connection', function(socket){
 //    console.log('a user connected'); 
-    cache.set('socket',socket);
     socket.on('disconnect', function(data){
         userLeave(socket);
     });
@@ -52,8 +50,7 @@ io.on('connection', function(socket){
         }
         socket.join(data);
         io.sockets.in(socket.room).emit('user.list',rooms.userList(data));  
-//        io.sockets.in(socket.room).emit('chat.history',cache.get(data+'.chat'));   
-        socket.emit('chat.history',cache.get(data+'.chat'));   
+        socket.emit('chat.history',rooms.getChat(data));   
         console.log(socket.user+' joined ' + data);
     });
 

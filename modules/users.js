@@ -20,6 +20,8 @@ obj.getRoom = function (user) {
     return (index >= 0) ? cache.values['users'][index].room : '';
 };
 
+obj.findUser = findUser;
+
 function findUser(name) {
     var users = cache.get('users');
     for (var i = 0; i < users.length; i++) {
@@ -29,6 +31,11 @@ function findUser(name) {
     }
     return -1;
 }
+
+obj.getUser = function (username) {
+    var index = findUser(username);
+    return (index >= 0) ? cache.values['users'][index] : null;
+};
 
 obj.authorised = function (user,token) {
     var index = findUser(user);
@@ -81,6 +88,26 @@ obj.deletePM = function (user,id) {
 
 obj.PMList = function (user) {
     return cache.get(user+'.messages') || [];
+};
+
+obj.updateToken = function (user,token) {
+    var users = cache.get('users');
+    var index = findUser(user);
+    cache.values['users'][index].token = token;
+    obj.saveUsers();
+};
+
+obj.addUser = function (username,pwd,token) {
+    var usr = {
+        name: username,
+        pwd: pwd,
+        access: 'user',
+        token: token
+    }    
+    cache.values['users'].push(usr);
+    obj.saveUsers();
+    cache.set(username+'.messages',[]);
+    obj.saveMessages(username);    
 };
 
 // save user message data to disk

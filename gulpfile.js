@@ -1,10 +1,23 @@
 var gulp = require('gulp');
-var watchLess = require('gulp-watch-less');
-var less = require('gulp-less');
+Promise = require('promise');
 
 gulp.task('less', function() {
+    var less = require('gulp-less');
+    
     return gulp.src('public/stylesheets/style.less')
         .pipe(less())
+        .pipe(gulp.dest('public/stylesheets/'));
+});
+
+gulp.task('autoprefixer', function () {
+    var postcss      = require('gulp-postcss');
+//    var sourcemaps   = require('gulp-sourcemaps');
+    var autoprefixer = require('autoprefixer-core');
+
+    return gulp.src('public/stylesheets/style.css')
+//        .pipe(sourcemaps.init())
+        .pipe(postcss([ autoprefixer({ browsers: ['last 2 version'] }) ]))
+//        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public/stylesheets/'));
 });
 

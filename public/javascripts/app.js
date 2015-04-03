@@ -72,6 +72,9 @@ app.controller('homeController', function ($scope, $rootScope, $window, utils, i
         console.log('join room '+room);
         io.emit('room.join',room);
         $scope.currentRoom = room;
+        if (!$scope.showChat) {
+            $scope.showMessages();
+        }
     });
 
     // update scope user
@@ -364,7 +367,7 @@ app.directive('myUser',function () {
                     }
                     if (!response.exists) {
                         $scope.setpwd = true;
-                        utils.warn('No such user');
+                        utils.warn('Set password');
                         return;
                     }
                     if (response.exists && response.login) {
@@ -416,7 +419,7 @@ app.directive('myInput',function () {
                 $scope.thiserror = $scope.myerror
             }); 
         },
-        link: function (scope, element, attrs, timeout) {
+        link: function (scope, element, attrs) {
             // apply some styling and animation on focus
             element.find('.my-input').focus(function () { 
 //                console.log(element);
@@ -478,7 +481,6 @@ app.directive('myInput',function () {
     };
 });
 
-
 // register resize main container on document ready
 $( document ).ready(function() {
     $(window).on('resize', resizeContainer);
@@ -493,7 +495,6 @@ function resizeContainer() {
     $('#content-container').css('height',height+'px');
     width = (parseInt(width) > 1000) ? 1000 : width;
     $('#content-container').css('width',width+'px');
-//    utils.scrollChat();
     var inj = angular.element('body').injector();
     inj.get('utils').scrollChat();
 }
