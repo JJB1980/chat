@@ -1,20 +1,5 @@
 'use strict';
 
-// register resize main container on document ready
-$( document ).ready(function() {
-    $(window).on('resize', resizeContainer);
-    resizeContainer();
-});
-
-// resize content area to window height and width (if width less than 1000)
-function resizeContainer() {
-    var height = $(window).height();
-    var width = $(window).width();
-//    console.log(height+"|"+width);
-    $('#content-container').css('height',height+'px');
-    width = (parseInt(width) > 1000) ? 1000 : width;
-    $('#content-container').css('width',width+'px');
-}
 
 // define ChatApp app and dependencies.
 var app = angular.module('ChatApp', [
@@ -31,10 +16,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/home.html",
             controller: "homeController"
         });
+    
 });
 
 // main controller for messaging.
-app.controller('homeController', function ($scope, $rootScope, utils, io, store) {
+app.controller('homeController', function ($scope, $rootScope, $window, utils, io, store) {
     
     $scope.chat = [];
     $scope.users = [];
@@ -124,7 +110,7 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
         console.log('chat.history updated');
         $scope.chat = data;
         $scope.$apply();
-        $(".chat-messages-container").scrollTop($(".chat-messages-container")[0].scrollHeight);
+        utils.scrollChat();
     });
     
     // update displayed chat messages from server
@@ -133,7 +119,7 @@ app.controller('homeController', function ($scope, $rootScope, utils, io, store)
         console.log(data);
         $scope.chat.push(data);
         $scope.$apply();
-        $(".chat-messages-container").scrollTop($(".chat-messages-container")[0].scrollHeight);
+        utils.scrollChat();
     });
      
     // start whisper user process
@@ -167,6 +153,12 @@ app.service('utils', function (LxNotificationService) {
         },
         error: function (message) {
             LxNotificationService.error(message);
+        },
+        scrollChat: function () {
+            try {
+                var el = $(".chat-messages-container"); 
+                el.scrollTop(el[0].scrollHeight);
+            } catch (err) {}
         }
     };
 });
@@ -485,3 +477,23 @@ app.directive('myInput',function () {
         }
     };
 });
+
+
+// register resize main container on document ready
+$( document ).ready(function() {
+    $(window).on('resize', resizeContainer);
+    resizeContainer();
+});
+
+// resize content area to window height and width (if width less than 1000)
+function resizeContainer() {
+    var height = $(window).height();
+    var width = $(window).width();
+//    console.log(height+"|"+width);
+    $('#content-container').css('height',height+'px');
+    width = (parseInt(width) > 1000) ? 1000 : width;
+    $('#content-container').css('width',width+'px');
+//    utils.scrollChat();
+    var inj = angular.element('body').injector();
+    inj.get('utils').scrollChat();
+}

@@ -7,6 +7,7 @@ h2,
 h3,
 h5 {
   color: #3366ff !important;
+  padding-bottom: 0.5em !important;
 }
 a {
   color: #3366ff !important;
@@ -102,12 +103,21 @@ a {
   text-align: center;
   font-size: 1.5em !important;
 }
+.rooms-nav:hover {
+  background-color: #d6e0f5;
+  color: #52527a;
+}
 .my-rooms {
   padding: 0.5em;
 }
 .my-room {
   margin-top: 0.5em;
+  padding: 0.2em;
   width: 100%;
+}
+.my-room:hover {
+  background-color: #d6e0f5;
+  color: #52527a;
 }
 .room-icon {
   width: 25%;
@@ -134,7 +144,7 @@ a {
 .chat-users-container {
   overflow: auto;
   height: 30em;
-  padding: 1.5em !important;
+  padding: 1em !important;
 }
 .chat-users-container ul {
   list-style-type: none;
@@ -165,7 +175,8 @@ a {
   position: relative;
 }
 .chat-row:hover {
-  background-color: #F0F0F5;
+  background-color: #d6e0f5;
+  color: #52527a;
 }
 .chat-user,
 .chat-message,

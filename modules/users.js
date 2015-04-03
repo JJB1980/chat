@@ -10,6 +10,7 @@ obj.setRoom = function (user,room) {
     if (index >= 0) {
         cache.values['users'][index].room = room;
     }
+    obj.saveUsers();
 };
 
 // get the users's room
