@@ -1,10 +1,12 @@
+(function () {
+
 'use strict';
 
 
 // define ChatApp app and dependencies.
 var app = angular.module('ChatApp', [
     'ui.router',
-    'lumx'
+//    'lumx'
 ]);
 
 // application routing
@@ -20,7 +22,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 });
 
 // main controller for messaging.
-app.controller('homeController', function ($scope, $rootScope, $window, utils, io, store) {
+app.controller('homeController', function ($scope, $rootScope, $timeout, utils, io, store) {
     
     $scope.chat = [];
     $scope.users = [];
@@ -31,7 +33,9 @@ app.controller('homeController', function ($scope, $rootScope, $window, utils, i
     $scope.currentRoom = '';
 
     $scope.showMessages = function () {
-        $scope.showChat = !$scope.showChat;
+        $timeout(function () {
+            $scope.showChat = !$scope.showChat;           
+        },200);
     }
     
     // send chat message or whisper
@@ -44,6 +48,8 @@ app.controller('homeController', function ($scope, $rootScope, $window, utils, i
                 io.emit('chat.message',$scope.comment);
             }
             $scope.comment = '';
+        } else {
+            $scope.cancelWhisper();
         }
     };
 
@@ -143,19 +149,25 @@ app.controller('homeController', function ($scope, $rootScope, $window, utils, i
 });
 
 // utility service
-app.service('utils', function (LxNotificationService) {
+app.service('utils', function ($rootScope) {
     return {
         ok: function (value) {
             return (value === "" || !value) ? false: true;
         },
         info: function (message) {
-            LxNotificationService.info(message);
+//            LxNotificationService.info(message);
+            $rootScope.toastMessage = message;
+            document.querySelector('#mainToast').show();
         },
         warn: function (message) {
-            LxNotificationService.warning(message);
+//            LxNotificationService.warning(message);
+            $rootScope.toastMessage = message;
+            document.querySelector('#mainToast').show();
         },
         error: function (message) {
-            LxNotificationService.error(message);
+//            LxNotificationService.error(message);
+            $rootScope.toastMessage = message;
+            document.querySelector('#mainToast').show();
         },
         scrollChat: function () {
             try {
@@ -274,15 +286,19 @@ app.directive('myRooms',function () {
         link: function (scope, element) {
             // show rooms on click of down arrow.
             element.find('.rooms-show').click(function () {
-                element.find('.rooms-show').css('display','none');
-                element.find('.rooms-hide').toggleClass('hidden-sm hidden-xs');
-                element.find('.my-rooms-content').toggleClass('hidden-sm hidden-xs');
+                window.setTimeout(function () {
+                    element.find('.rooms-show').css('display','none');
+                    element.find('.rooms-hide').toggleClass('hidden-sm hidden-xs');
+                    element.find('.my-rooms-content').toggleClass('hidden-sm hidden-xs');                   
+                },200);
             });
             // hide rooms on click of up arrow
             element.find('.rooms-hide').click(function () {
-                element.find('.rooms-show').css('display','block');
-                element.find('.rooms-hide').toggleClass('hidden-sm hidden-xs');
-                element.find('.my-rooms-content').toggleClass('hidden-sm hidden-xs');
+                window.setTimeout(function () {
+                    element.find('.rooms-show').css('display','block');
+                    element.find('.rooms-hide').toggleClass('hidden-sm hidden-xs');
+                    element.find('.my-rooms-content').toggleClass('hidden-sm hidden-xs');
+                 },200);               
             });
             // hide rooms when room selected.
             scope.$watch('currentRoom',function () {
@@ -414,6 +430,7 @@ app.directive('myInput',function () {
             $scope.myicon = $attrs.myicon;
             $scope.myholder = $attrs.myholder;
             $scope.mytype = $attrs.mytype;
+            $scope.isdark = $attrs.mydark;
             $scope.$watch('myerror',function () {
 //                console.log('myerror: '+$scope.myerror);
                 $scope.thiserror = $scope.myerror
@@ -423,25 +440,18 @@ app.directive('myInput',function () {
             // apply some styling and animation on focus
             element.find('.my-input').focus(function () { 
 //                console.log(element);
-                if (!element.hasClass('validate-error')) {
+                if (!scope.thiserror) {
                     element.find('.input-icon').addClass('focus-icon');
-                    element.find('.input-bottom').addClass('focus-bottom');  
-//                    console.log($(element.find('.input-bottom').children()[0]));
+                    element.find('.input-bottom').addClass('focus-bottom'); 
                     $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},400,"linear");
                 }
             });
             // reset styles and animation on blur
             element.find('.my-input').blur(function () {          
-                if (!element.hasClass('validate-error')) {          
+                if (!scope.thiserror) {          
                     element.find('.input-icon').removeClass('focus-icon');
                     $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '0%'},400,"linear",function() {
                         element.find('.input-bottom').removeClass('focus-bottom'); 
-                    });
-                }
-                if (scope.myescape) {
-                    scope.$apply(function (){
-                        scope.myvalue = '';
-                        scope.myescape();
                     });
                 }
             }); 
@@ -481,6 +491,28 @@ app.directive('myInput',function () {
     };
 });
 
+app.directive('myTooltip',function () {
+    return {
+        restrict: 'A',
+        scope: {},
+        link: function (scope, element, attrs) {
+            $(element).tooltip({container: 'body'});     
+        }
+    };
+});
+
+
+app.directive('myScroll',function () {
+    return {
+        restrict: 'A',
+        scope: {},
+        link: function (scope, element, attrs) {
+            $(element).perfectScrollbar();     
+        }
+    };
+});
+
+
 // register resize main container on document ready
 $( document ).ready(function() {
     $(window).on('resize', resizeContainer);
@@ -498,3 +530,5 @@ function resizeContainer() {
     var inj = angular.element('body').injector();
     inj.get('utils').scrollChat();
 }
+    
+})();

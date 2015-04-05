@@ -1,10 +1,15 @@
 <div class="my-rooms">
 
-    <span class="mdi mdi-chevron-down hidden-md hidden-lg rooms-nav rooms-show hand" 
-          lx-tooltip="Show Rooms" tooltip-position="bottom"></span>
-    <span class="mdi mdi-chevron-up rooms-nav rooms-hide hidden-sm hidden-xs hidden-md hidden-lg hand" 
-          lx-tooltip="Hide Rooms" tooltip-position="bottom"></span>
-    
+        <span class="rooms-nav hand mdi mdi-chevron-down hidden-md hidden-lg rooms-show" 
+              my-tooltip data-placement="bottom" title="Show Rooms">
+            <paper-ripple fit></paper-ripple>
+        </span>
+        <span class="rooms-nav hand mdi mdi-chevron-up rooms-hide hidden-sm hidden-xs hidden-md hidden-lg" 
+              my-tooltip data-placement="bottom" title="Hide Rooms">
+            <paper-ripple fit></paper-ripple>
+        </span>
+        
+        
     <div class="hidden-sm hidden-xs my-rooms-content">
         <h4>Rooms</h4>
 
@@ -14,6 +19,7 @@
                  data-ng-class="{ 'current-room': currentRoom === $index }" >
                 <span class="room-icon mdi mdi-{{room.icon}}"></span>
                 <span class="room-name">{{room.name}}</span>
+                <paper-ripple fit></paper-ripple>
             </div>
         </div>
 

@@ -11,23 +11,26 @@
         <div class="chat-messages" ng-show="showChat">
             <h4>Current Room: <i>{{currentRoom}}</i></h4>
             <div class="row">
-                <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container">
-                     <div class="row chat-row" data-ng-repeat="msg in chat"  ng-class="{ 'message-sep': $index > 0 }">
-                        <div class="col-md-2 col-sm-2 col-xs-6 chat-user">
-                           <span data-ng-show="username!==msg.user" lx-tooltip="Whisper User" class="hand" 
-                                  tooltip-position="bottom"  data-ng-click="whisperUser(msg.user)">{{msg.user}}</span>
-                            <span data-ng-show="username===msg.user">{{msg.user}}</span>
-                        </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6 chat-time">{{msg.time}}</div>
-                        <div class="col-md-6 col-sm-6 col-xs-12 chat-message">{{msg.msg}}</div>
+                <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container" my-scroll>
+                     <div class="row chat-row" data-ng-repeat="msg in chat">
+                            <div class="col-md-2 col-sm-2 col-xs-6 chat-user">
+                               <span data-ng-show="username!==msg.user" 
+                                     my-tooltip data-placement="bottom" title="Message User"
+                                     class="hand" data-ng-click="whisperUser(msg.user)">{{msg.user}}</span>
+                                <span data-ng-show="username===msg.user">{{msg.user}}</span>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-6 chat-time">{{msg.time}}</div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 chat-message">{{msg.msg}}</div>
+                         
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
+                <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container" my-scroll>
                     <h5>Users</h5>
                     <ul>
                         <li data-ng-repeat="user in users track by $index">
-                            <span data-ng-show="username!==user" lx-tooltip="Whisper User" class="hand" 
-                                  tooltip-position="bottom"  data-ng-click="whisperUser(user)">{{user}}</span>
+                            <span data-ng-show="username!==user" 
+                                  my-tooltip data-placement="bottom" title="Message User"
+                                  class="hand"  data-ng-click="whisperUser(user)">{{user}}</span>
                             <span data-ng-show="username===user">{{user}}</span>
                         </li>
                     </ul>
@@ -36,20 +39,27 @@
         </div>
         <div class="chat-messages" ng-show="!showChat">
             <h4>My Messages</h4>
-            <div class="row chat-row" data-ng-repeat="msg in pm" ng-class="{ 'message-sep': $index > 0 }">
-                <div class="col-md-2 col-sm-2 col-xs-2 chat-user hand" lx-tooltip="Whisper User" 
-                                  tooltip-position="bottom"  data-ng-click="whisperUser(msg.from)">{{msg.from}}</div>
+            <div class="row chat-row" data-ng-repeat="msg in pm" >
+                <div class="col-md-2 col-sm-2 col-xs-2 chat-user hand"  
+                     my-tooltip data-placement="bottom" title="Message User"  
+                     data-ng-click="whisperUser(msg.from)">{{msg.from}}</div>
                 <div class="col-md-2 col-sm-2 col-xs-2 chat-time">{{msg.time}}</div>
-                <div ng-show="msg.read" class="col-md-2 col-sm-2 col-xs-2 chat-time">Read</div>
-                <div ng-show="!msg.read" class="col-md-2 col-sm-2 col-xs-2 chat-time">New</div>
+                <div ng-show="msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">Read</div>
+                <div ng-show="!msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">New</div>
                 <div class="col-md-4 col-sm-4 col-xs-4 chat-message">{{msg.msg}}</div>
-                <div class="col-md-2 col-sm-2 col-xs-2 pm-actions">
-                    <span lx-tooltip="Delete" tooltip-position="bottom" 
-                          data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand"></span>
-                    <span lx-tooltip="Mark Read" tooltip-position="bottom" 
-                          data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand"></span>
-                    <span lx-tooltip="Reply" tooltip-position="bottom"
-                          data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand"></span>
+                <div class="col-md-3 col-sm-3 col-xs-3 pm-actions">
+                    <span  my-tooltip data-placement="bottom" title="Delete"
+                          data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand">
+                    <paper-ripple fit></paper-ripple>
+                    </span>
+                    <span  my-tooltip data-placement="bottom" title="Mark Read"
+                          data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand">
+                    <paper-ripple fit></paper-ripple>
+                    </span>
+                    <span  my-tooltip data-placement="bottom" title="Reply"
+                          data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand">
+                    <paper-ripple fit></paper-ripple>
+                    </span>
                 </div>
             </div>
         </div>
@@ -61,11 +71,20 @@
             </div>
             <div class="chat-bar-actions">
                 <span data-ng-show="!showChat" data-ng-click="showMessages()"
-                      lx-tooltip="Return to chat" tooltip-position="top" class="mdi mdi-redo hand"></span>            
+                       my-tooltip data-placement="top" title="Back"
+                      class="mdi mdi-redo hand">
+                <paper-ripple fit></paper-ripple>
+                </span>            
                 <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
-                      lx-tooltip="No Messages" tooltip-position="top" class="mdi mdi-email-outline hand"></span>
+                       my-tooltip data-placement="top" title="No Messages"
+                      class="mdi mdi-email-outline hand">
+                <paper-ripple fit></paper-ripple>
+                </span>
                 <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
-                      lx-tooltip="Read Messages" tooltip-position="top" class="mdi mdi-email hand"></span>
+                       my-tooltip data-placement="top" title="New Messages"
+                      class="mdi mdi-email hand">
+                <paper-ripple fit></paper-ripple>
+                </span>
                 <span data-ng-show="unread>0&&showChat" class="unread">({{unread}})</span>
             </div>
         </div>

@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 var path = require('path');
 var favicon = require('serve-favicon');
 
-app.use(favicon(__dirname + '/public/images/favicon2.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 var index = require('./routes/index');

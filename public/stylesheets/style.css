@@ -32,20 +32,15 @@ a {
 }
 #left-container {
   border-right: 1px solid #d6d6ff;
-  padding: 1em;
   overflow: auto;
   min-height: 100%;
-  /*    background-color: blue;*/
+  background-color: #1f1f2e;
+  color: #a3a3c2;
 }
 #right-container {
   padding: 1em;
   overflow: auto;
   min-height: 100%;
-  /*    background-color: green;*/
-}
-.my-user {
-  border-bottom: 1px solid #d6d6ff;
-  padding-bottom: 2em;
 }
 /* myInput directive */
 .input-icon {
@@ -55,6 +50,9 @@ a {
   font-size: 1.2em !important;
   position: relative;
   top: 0.2em;
+}
+.icon-dark {
+  color: #a3a3c2;
 }
 .my-input-container {
   padding-top: 0.5em;
@@ -74,6 +72,9 @@ a {
   margin-top: 0.2em;
   display: inline-block;
   float: left;
+}
+.bottom-dark {
+  background-color: #a3a3c2;
 }
 .focus-bottom {
   height: 2px !important;
@@ -96,6 +97,9 @@ a {
   min-height: 100%;
 }
 /* rooms and navigate rooms on small screens */
+.my-user {
+  padding-bottom: 1em;
+}
 .rooms-nav {
   display: inline-block;
   width: 100%;
@@ -104,8 +108,11 @@ a {
   font-size: 1.5em !important;
 }
 .rooms-nav:hover {
-  background-color: #d6e0f5;
-  color: #52527a;
+  background-color: #33334c;
+  color: #c2c2d6;
+}
+.my-rooms-content > h4 {
+  color: #F0F0F5 !important;
 }
 .my-rooms {
   padding: 0.5em;
@@ -119,8 +126,8 @@ a {
   overflow: hidden;
 }
 .my-room:hover {
-  background-color: #d6e0f5;
-  color: #52527a;
+  background-color: #33334c;
+  color: #c2c2d6;
 }
 .room-icon {
   width: 25%;
@@ -131,6 +138,7 @@ a {
 }
 .current-room {
   font-weight: bold;
+  background-color: #29293D;
 }
 /* chat messages and user list */
 .chat-messages {
@@ -151,6 +159,7 @@ a {
 }
 .chat-users-container ul {
   list-style-type: none;
+  padding: 0px !important;
 }
 .chat-users-container ul li {
   font-weight: bold;
@@ -172,10 +181,18 @@ a {
   padding-top: 0.5em;
   font-size: 1.5em;
 }
+.chat-bar-actions span {
+  padding: 0.3em;
+}
 .chat-row {
-  width: 100%;
+  width: 98%;
   padding: 0.2em;
   position: relative;
+  margin: 0.3em;
+  border: 1px solid #d6d6ff;
+  background-color: #F0F0F5;
+  margin-left: 0em !important;
+  margin-right: -0.5em !important;
 }
 .chat-row:hover {
   background-color: #d6e0f5;
@@ -221,13 +238,10 @@ pm-actions {
 /* resize containers on smaller screens */
 @media (max-width: 1000px) {
   #left-container {
-    min-height: 8em;
+    min-height: 6em;
   }
   #right-container {
-    min-height: 40em;
-  }
-  .my-rooms {
-    border-bottom: 1px solid #d6d6ff;
+    min-height: 30em;
   }
   .chat-messages {
     width: 99%;
@@ -246,4 +260,8 @@ pm-actions {
   .chat-message {
     padding-left: 2em !important;
   }
+}
+paper-toast {
+  right: 10px;
+  left: auto;
 }
