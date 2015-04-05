@@ -13,11 +13,10 @@
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container" my-scroll>
                      <div class="row chat-row" data-ng-repeat="msg in chat">
-                            <div class="col-md-2 col-sm-2 col-xs-6 chat-user">
-                               <span data-ng-show="username!==msg.user" 
-                                     my-tooltip data-placement="bottom" title="Message User"
-                                     class="hand" data-ng-click="whisperUser(msg.user)">{{msg.user}}</span>
-                                <span data-ng-show="username===msg.user">{{msg.user}}</span>
+                            <div class="col-md-2 col-sm-2 col-xs-6">
+                                <whisper-user username="username" msguser="msg.user" clickfn="whisperUser">
+                                </whisper-user>
+                                <div class="pm-user" data-ng-show="username===msg.user">{{msg.user}}</div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-6 chat-time">{{msg.time}}</div>
                             <div class="col-md-6 col-sm-6 col-xs-12 chat-message">{{msg.msg}}</div>
@@ -26,23 +25,21 @@
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container" my-scroll>
                     <h5>Users</h5>
-                    <ul>
-                        <li data-ng-repeat="user in users track by $index">
-                            <span data-ng-show="username!==user" 
-                                  my-tooltip data-placement="bottom" title="Message User"
-                                  class="hand"  data-ng-click="whisperUser(user)">{{user}}</span>
-                            <span data-ng-show="username===user">{{user}}</span>
-                        </li>
-                    </ul>
+                        <div data-ng-repeat="user in users track by $index">
+                            <whisper-user username="username" msguser="user" clickfn="whisperUser">
+                            </whisper-user>
+                            <div class="pm-user" data-ng-show="username===user">{{user}}</div>
+                        </div>
                 </div>
             </div>
         </div>
         <div class="chat-messages" ng-show="!showChat">
             <h4>My Messages</h4>
             <div class="row chat-row" data-ng-repeat="msg in pm" >
-                <div class="col-md-2 col-sm-2 col-xs-2 chat-user hand"  
-                     my-tooltip data-placement="bottom" title="Message User"  
-                     data-ng-click="whisperUser(msg.from)">{{msg.from}}</div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                    <whisper-user username="username" msguser="msg.from" clickfn="whisperUser">
+                    </whisper-user>
+                </div>
                 <div class="col-md-2 col-sm-2 col-xs-2 chat-time">{{msg.time}}</div>
                 <div ng-show="msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">Read</div>
                 <div ng-show="!msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">New</div>

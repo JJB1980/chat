@@ -156,8 +156,9 @@ app.service('utils', function ($rootScope) {
         },
         info: function (message) {
 //            LxNotificationService.info(message);
+//            $rootScope.toastMessage = "<span class='mdi mdi-alert-circle'></span> " + message;
             $rootScope.toastMessage = message;
-            document.querySelector('#mainToast').show();
+            document.querySelector('#mainToast').show();            
         },
         warn: function (message) {
 //            LxNotificationService.warning(message);
@@ -491,6 +492,22 @@ app.directive('myInput',function () {
     };
 });
 
+app.directive('whisperUser', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            username: '=username',
+            msguser: '=msguser',
+            clickfn: '=clickfn'
+        },
+        template: '<div data-ng-show="username!==msguser"  my-tooltip data-placement="bottom" ' +
+                    'title="Message User" class="hand pm-user" ' +
+                    'data-ng-click="clickfn(msguser)">{{msguser}}<paper-ripple fit></papper-ripple></div>',
+        controller: function ($scope, $attrs) {
+        }
+    };
+});
+    
 app.directive('myTooltip',function () {
     return {
         restrict: 'A',
@@ -500,7 +517,6 @@ app.directive('myTooltip',function () {
         }
     };
 });
-
 
 app.directive('myScroll',function () {
     return {

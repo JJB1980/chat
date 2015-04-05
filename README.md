@@ -8,7 +8,8 @@ $ node app.js
 
 # dependencies
 The application uses an angular front end with bootrap for responsive layout.  
-Lum.x http://ui.lumapps.com/ used for message toasts and tooltips.
+https://www.polymer-project.org used for message toasts, ripple effects.
+Bootstrap used for layout and tooltips.
 Socket.io is used to interact real-time with the backend.
 Icons taken from http://materialdesignicons.com/
 

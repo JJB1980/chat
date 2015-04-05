@@ -2,12 +2,18 @@
   "name": "chat",
   "version": "0.0.0",
   "authors": [
-    "JJB1980 <john@jjbsw.com>"
+    "JJB1980 <j.j.b1980@live.com>"
   ],
   "main": "index.html",
   "license": "MIT",
   "dependencies": {
     "angular-ui-router": "~0.2.13",
-    "lumx": "~0.3.24"
+    "bootstrap": "~3.3.4",
+    "mdi": "~1.0.8-beta",
+    "webcomponentsjs": "~0.6.0",
+    "paper-button": "Polymer/paper-button#^0.5",
+    "paper-ripple": "Polymer/paper-ripple#^0.5",
+    "paper-shadow": "Polymer/paper-shadow#^0.5",
+    "paper-toast": "Polymer/paper-toast#^0.5"
   }
 }
