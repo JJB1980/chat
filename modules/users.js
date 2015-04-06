@@ -39,7 +39,7 @@ obj.getUser = function (username) {
 
 obj.authorised = function (user,token) {
     var index = findUser(user);
-    return (cache.values['users'][index].token === token);
+    return cache.values['users'][index].token === token;
 }
 
 obj.newPM = function (from,data) {

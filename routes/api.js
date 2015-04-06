@@ -40,8 +40,8 @@ router.post('/user', function(req, res, next) {
     var found = -1;
     var username = req.query.user;
     var pwd = req.query.pwd;
-    if (!username || !pwd) {
-        res.json({error:'access denied'});
+    if (!utils.ok(username) || !utils.ok(pwd)) {
+        res.json({error:'missing username or password'});
         return;
     }
     var token = utils.uuid();

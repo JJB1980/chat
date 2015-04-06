@@ -46,15 +46,15 @@
                 <div class="col-md-4 col-sm-4 col-xs-4 chat-message">{{msg.msg}}</div>
                 <div class="col-md-3 col-sm-3 col-xs-3 pm-actions">
                     <span  my-tooltip data-placement="bottom" title="Delete"
-                          data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand">
+                          data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand my-button">
                     <paper-ripple fit></paper-ripple>
                     </span>
                     <span  my-tooltip data-placement="bottom" title="Mark Read"
-                          data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand">
+                          data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand my-button">
                     <paper-ripple fit></paper-ripple>
                     </span>
                     <span  my-tooltip data-placement="bottom" title="Reply"
-                          data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand">
+                          data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand my-button">
                     <paper-ripple fit></paper-ripple>
                     </span>
                 </div>
@@ -69,17 +69,21 @@
             <div class="chat-bar-actions">
                 <span data-ng-show="!showChat" data-ng-click="showMessages()"
                        my-tooltip data-placement="top" title="Back"
-                      class="mdi mdi-redo hand">
+                      class="mdi mdi-redo hand my-button">
                 <paper-ripple fit></paper-ripple>
                 </span>            
+<!--
+                <my-button my-tooltip data-ng-show="!showChat" clickfn="showMessages" 
+                           mytitle="Back" myplacement="top" myicon="redo"></my-button>
+-->
                 <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
                        my-tooltip data-placement="top" title="No Messages"
-                      class="mdi mdi-email-outline hand">
+                      class="mdi mdi-email-outline hand my-button">
                 <paper-ripple fit></paper-ripple>
                 </span>
                 <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
                        my-tooltip data-placement="top" title="New Messages"
-                      class="mdi mdi-email hand">
+                      class="mdi mdi-email hand my-button">
                 <paper-ripple fit></paper-ripple>
                 </span>
                 <span data-ng-show="unread>0&&showChat" class="unread">({{unread}})</span>

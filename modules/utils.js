@@ -17,4 +17,8 @@ obj.uuid = function () {
     return uuid;
 };
 
+obj.ok = function (val) {
+    return (!val || val === '') ? false : true;
+};
+
 module.exports = obj;
