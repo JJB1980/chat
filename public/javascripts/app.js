@@ -444,14 +444,14 @@
                     if (!scope.thiserror) {
                         element.find('.input-icon').addClass('focus-icon');
                         element.find('.input-bottom').addClass('focus-bottom'); 
-                        $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},400,"linear");
+                        $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '100%'},200,"linear");
                     }
                 });
                 // reset styles and animation on blur
                 element.find('.my-input').blur(function () {          
                     if (!scope.thiserror) {          
                         element.find('.input-icon').removeClass('focus-icon');
-                        $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '0%'},400,"linear",function() {
+                        $(element.find('.input-bottom').find('.bottom-slider')).animate({width: '0%'},200,"linear",function() {
                             element.find('.input-bottom').removeClass('focus-bottom'); 
                         });
                     }

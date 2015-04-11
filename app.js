@@ -18,6 +18,13 @@ app.use('/', index);
 // route to some api calls for user login etc.
 app.use('/api/', api);
 
+
+var cleanup = require('./modules/cleanup.js').Cleanup(myCleanup);
+// defines app specific callback...
+function myCleanup() {
+  console.log('App specific cleanup code...');
+};
+
 function userLeave(socket) {
     if (socket.user && socket.room) {
         rooms.removeUser(socket.room,socket.user);
