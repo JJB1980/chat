@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js",
+    "postinstall": "cd public && bower install"
   },
   "dependencies": {
     "autoprefixer-core": "^5.1.8",
@@ -13,8 +14,6 @@
     "express": "~4.12.2",
     "gulp": "^3.8.11",
     "gulp-less": "^3.0.2",
-    "gulp-postcss": "^5.0.0",
-    "gulp-sourcemaps": "^1.5.1",
     "jade": "~1.9.2",
     "morgan": "~1.5.1",
     "promise": "^6.1.0",

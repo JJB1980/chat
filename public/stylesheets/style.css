@@ -18,6 +18,18 @@ a {
 .hand {
   cursor: pointer;
 }
+.my-button {
+  border-radius: 50%;
+  position: relative;
+}
+.my-button:hover {
+  background-color: #52527A;
+  color: white;
+}
+paper-toast {
+  right: 10px;
+  left: auto;
+}
 /* Page layout */
 #content-container {
   min-height: 100%;
@@ -194,7 +206,7 @@ a {
 }
 .chat-row:hover {
   background-color: #d6e0f5;
-  color: #52527a;
+  color: black;
 }
 .chat-user,
 .chat-message,
@@ -258,16 +270,4 @@ pm-actions {
   .chat-message {
     padding-left: 2em !important;
   }
-}
-.my-button {
-  border-radius: 50%;
-  position: relative;
-}
-.my-button:hover {
-  background-color: #52527A;
-  color: white;
-}
-paper-toast {
-  right: 10px;
-  left: auto;
 }
