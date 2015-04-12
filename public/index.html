@@ -21,8 +21,8 @@
         <link rel="import" href="components/font-roboto/roboto.html" >
         <link rel="stylesheet" href="components/mdi/css/materialdesignicons.css">
 
-        <link rel='stylesheet' href='lib/scroll/css/perfect-scrollbar.css' />
-  
+        <!--<link rel='stylesheet' href='lib/scroll/css/perfect-scrollbar.css' />-->
+
  
         <link rel="import" href="components/paper-ripple/paper-ripple.html">
         <link rel="import" href="components/paper-shadow/paper-shadow.html">
@@ -37,15 +37,56 @@
         
     </head>
 
-    <body data-ng-app="ChatApp">
+    <body data-ng-app="ChatApp" data-ng-controller="ApplicationCtrl">
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-       
-         <div id="content-container">
-           <div data-ui-view=""></div>
-        </div>   
-        
+
+        <core-drawer-panel>
+            <div drawer>
+                <div id="my-progress"></div>
+                <my-rooms></my-rooms>
+            </div>
+            <div main>
+                <core-header-panel mode="waterfall">
+                    <div class="core-header">
+                         <span core-drawer-toggle class="mdi mdi-menu hand my-menu-btn">
+                            <paper-ripple core-drawer-toggle fit></paper-ripple>
+                        </span>
+                        <div id="title-room">
+                            <span data-ng-show="showChat">Current Room: <i>{{currentRoom}}</i></span>
+                            <span data-ng-show="!showChat">My Messages</span>
+                        </div>
+                        <div id="title-messages">
+                           <span data-ng-show="!showChat" data-ng-click="showMessages()"
+                                 my-tooltip data-placement="bottom" title="Back"
+                                 class="mdi mdi-redo hand my-menu-btn">
+                                <paper-ripple fit></paper-ripple>
+                            </span>
+                            <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
+                                  my-tooltip data-placement="bottom" title="No Messages"
+                                  class="mdi mdi-email-outline hand my-menu-btn">
+                                <paper-ripple fit></paper-ripple>
+                            </span>
+                            <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
+                                  my-tooltip data-placement="bottom" title="New Messages"
+                                  class="mdi mdi-email hand my-menu-btn">
+                            <paper-ripple fit></paper-ripple>
+                            </span>
+                            <span data-ng-show="unread>0&&showChat" class="my-menu-btn">({{unread}})</span>
+                        </div>
+                        <div id="title-user">
+                            <my-user></my-user>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div data-ui-view=""></div>
+                    </div>
+                </core-header-panel>
+            </div>
+        </core-drawer-panel>
+
+
         <paper-toast id="mainToast" text="{{toastMessage}}"></paper-toast>
                 
   

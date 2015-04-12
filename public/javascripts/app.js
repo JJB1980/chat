@@ -4,8 +4,7 @@
 
     // define ChatApp app and dependencies.
     var app = angular.module('ChatApp', [
-        'ui.router',
-    //    'lumx'
+        'ui.router'
     ]);
 
     // application routing
@@ -20,22 +19,49 @@
 
     });
 
+    app.controller('ApplicationCtrl', function ($scope, $rootScope, $timeout) {
+
+        $scope.currentRoom = '';
+        $scope.showChat = true;
+        $scope.unread = 0;
+
+        // change room
+        $rootScope.$on('room.change',function (event, data) {
+            $scope.currentRoom = data;
+        });
+
+        $rootScope.$on('messages.unread',function (event, data) {
+            $scope.unread = data;
+        });
+
+        $rootScope.$on('user.login',function (event, user) {
+            $scope.username = user;
+        });
+
+        $scope.showMessages = function () {
+            $timeout(function () {
+                $scope.showChat = !$scope.showChat;
+                $rootScope.$broadcast('chat.show',$scope.showChat);
+            },200);
+        };
+
+
+
+    });
+
     // main controller for messaging.
     app.controller('homeController', function ($scope, $rootScope, $timeout, utils, io, store) {
 
         $scope.chat = [];
         $scope.users = [];
         $scope.username = '';
-        $scope.unread = 0;
-        $scope.showChat = true;
         $scope.pm = [];
-        $scope.currentRoom = '';
+        $scope.showChat = true;
 
-        $scope.showMessages = function () {
-            $timeout(function () {
-                $scope.showChat = !$scope.showChat;           
-            },200);
-        }
+        $rootScope.$on('chat.show',function (event, data) {
+            $scope.showChat = data;
+        });
+
 
         // send chat message or whisper
         $scope.submitComment = function () {
@@ -70,13 +96,13 @@
                     $scope.unread++;
                 }
             });
+            $rootScope.$broadcast('messages.unread',$scope.unread);
         };
 
         // change room
         $rootScope.$on('room.change',function (event, room) {
             console.log('join room '+room);
             io.emit('room.join',room);
-            $scope.currentRoom = room;
             if (!$scope.showChat) {
                 $scope.showMessages();
             }
@@ -99,7 +125,7 @@
         io.socket.on('pm.list',function (data) {
             console.log('pm.list updated');
             console.log(data)
-            $scope.pm = data;
+            $scope.pm = data.reverse();
             $scope.unreadMessages();
             $scope.$apply();
         });
@@ -108,7 +134,7 @@
         io.socket.on('pm.new',function (data) {
             console.log('pm.new');
             console.log(data);
-            $scope.pm.push(data);
+            $scope.pm.unshift(data);
             $scope.unreadMessages();
             $scope.$apply();
         });
@@ -116,7 +142,7 @@
         // display chat history when joining a room
         io.socket.on('chat.history',function (data) {
             console.log('chat.history updated');
-            $scope.chat = data;
+            $scope.chat = data.reverse();
             $scope.$apply();
             utils.scrollChat();
         });
@@ -125,7 +151,7 @@
         io.socket.on('chat.update',function (data) {
             console.log('chat.update updated');
             console.log(data);
-            $scope.chat.push(data);
+            $scope.chat.unshift(data);
             $scope.$apply();
             utils.scrollChat();
         });
@@ -171,8 +197,10 @@
             },
             scrollChat: function () {
                 try {
-                    var el = $(".chat-messages-container"); 
-                    el.scrollTop(el[0].scrollHeight);
+                    //var el = $(".chat-messages-container");
+                    //el.scrollTop(el[0].scrollHeight);
+                    $(document.getElementsByTagName('core-header-panel')[0].scroller).scrollTop();
+
                 } catch (err) {}
             },
             closeDrawer: function () {
@@ -548,14 +576,14 @@
         };
     });
 
-    app.directive('myScroll',function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                $(element).perfectScrollbar();     
-            }
-        };
-    });
+    //app.directive('myScroll',function () {
+    //    return {
+    //        restrict: 'A',
+    //        link: function (scope, element, attrs) {
+    //            $(element).perfectScrollbar();
+    //        }
+    //    };
+    //});
 
 
     // register resize main container on document ready

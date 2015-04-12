@@ -1,3 +1,5 @@
+/* global module: true */
+
 var cache = require('../modules/cache.js');
 var _data = require('../modules/data.js');
 var utils = require('../modules/utils.js');

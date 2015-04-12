@@ -1,3 +1,4 @@
+/* global module: true */
 // memory singleton for storing data.
 var obj = {
     values: [],

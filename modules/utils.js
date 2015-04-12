@@ -1,3 +1,4 @@
+/* global module: true */
 
 var obj = {};
 

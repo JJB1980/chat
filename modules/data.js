@@ -1,3 +1,4 @@
+/* global module: true, __dirname: true */
 
 var fs = require('fs');
 var Promise = require('promise');
@@ -5,7 +6,9 @@ var cache = require('../modules/cache.js');
 
 var obj = {};
 
-var _dir = __dirname + '/data/';
+var _slash = __dirname.indexOf('/') >= 0 ? '/' : '\\';
+var _fldr = __dirname.toString().split(_slash);
+var _dir = _fldr.slice(0,_fldr.length-1).join(_slash) + '/data/';
 
 // read a file and parse returned data as json
 obj.read = function (filename) {
