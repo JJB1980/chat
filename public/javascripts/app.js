@@ -199,7 +199,8 @@
                 try {
                     //var el = $(".chat-messages-container");
                     //el.scrollTop(el[0].scrollHeight);
-                    $(document.getElementsByTagName('core-header-panel')[0].scroller).scrollTop();
+                    var el = document.getElementsByTagName('core-header-panel')[0];
+                    $(el.scroller).animate({ scrollTop: 0 }, "fast");
 
                 } catch (err) {}
             },

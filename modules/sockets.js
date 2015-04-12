@@ -10,6 +10,8 @@ var obj = {};
 
 obj.init = function (io) {
 
+    obj.io = io;
+
     io.on('connection', function (socket) {
 //    console.log('a user connected');
         socket.on('disconnect', function (data) {
@@ -94,7 +96,7 @@ function userLeave(socket) {
     }
     if (socket.user) {
         console.log(socket.user+' disconnected');
-        io.sockets.emit('user.left',socket.user);
+        obj.io.sockets.emit('user.left',socket.user);
         socket.leave(socket.user+'.messages');
         socket.user = null;
     }
