@@ -174,6 +174,9 @@
                     var el = $(".chat-messages-container"); 
                     el.scrollTop(el[0].scrollHeight);
                 } catch (err) {}
+            },
+            closeDrawer: function () {
+                document.getElementsByTagName('core-drawer-panel')[0].closeDrawer();
             }
         };
     });
@@ -249,7 +252,7 @@
             restrict: 'E',
             templateUrl: 'partials/roomsDirective.html',
             scope: {},
-            controller: function ($scope, $rootScope, comms, io) {
+            controller: function ($scope, $rootScope, comms, io, utils) {
                 $scope.rooms = [];
                 // get rooms.
                 comms.rooms().success(function (response) {
@@ -263,6 +266,7 @@
                     $scope.currentRoom = index;
     //                console.log(room);
                     $rootScope.$broadcast('room.change',room.name);
+                    utils.closeDrawer();
                 };
                 // set room if stored on server
                 io.socket.on('user.registered',function (event,data) {
@@ -555,10 +559,10 @@
 
 
     // register resize main container on document ready
-    $( document ).ready(function() {
-        $(window).on('resize', resizeContainer);
-        resizeContainer();
-    });
+//    $( document ).ready(function() {
+//        $(window).on('resize', resizeContainer);
+//        resizeContainer();
+//    });
 
     // resize content area to window height and width (if width less than 1000)
     function resizeContainer() {

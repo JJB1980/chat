@@ -35,7 +35,7 @@ router.get('/user', function(req, res, next) {
     }
 });
 
-// set a user &/or password if not already set
+// register a user
 router.post('/user', function(req, res, next) {
     var found = -1;
     var username = req.query.user;
