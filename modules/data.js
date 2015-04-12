@@ -7,8 +7,8 @@ var cache = require('../modules/cache.js');
 var obj = {};
 
 var _slash = __dirname.indexOf('/') >= 0 ? '/' : '\\';
-var _fldr = __dirname.toString().split(_slash);
-var _dir = _fldr.slice(0,_fldr.length-1).join(_slash) + '/data/';
+var _fl = __dirname.toString().split(_slash);
+var _dir = _fl.slice(0,_fl.length-1).join(_slash) + '/data/';
 
 // read a file and parse returned data as json
 obj.read = function (filename) {
