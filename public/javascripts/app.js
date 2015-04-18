@@ -46,11 +46,10 @@
         };
 
 
-
     });
 
     // main controller for messaging.
-    app.controller('homeController', function ($scope, $rootScope, $timeout, utils, io, store) {
+    app.controller('homeController', function ($scope, $rootScope, $timeout, utils, io) {
 
         $scope.chat = [];
         $scope.users = [];
@@ -81,6 +80,7 @@
         $scope.PMDelete = function (msg,index) {
             io.emit('chat.pm.delete',msg.id);
             $scope.pm.splice(index,1);
+            $scope.unreadMessages();
         };
 
         $scope.PMRead = function (msg) {
@@ -124,7 +124,7 @@
         // list of users personal messages
         io.socket.on('pm.list',function (data) {
             console.log('pm.list updated');
-            console.log(data)
+            console.log(data);
             $scope.pm = data.reverse();
             $scope.unreadMessages();
             $scope.$apply();
@@ -227,25 +227,27 @@
 
         var host = window.location.origin + '/api/';
 
-        var obj = {
+        return {
             connect: function (user,pwd,token) {
                 var url = host+'user?user='+user+'&pwd='+pwd+'&token='+token;
                 console.log(url);
                 return $http.get(url);
             },
             pwd: function (user,pwd) {
-                var url = host+'user?user='+user+'&pwd='+pwd;
+                var url = host+'user';
                 console.log(url);
-                return $http.post(url);
+                return $http.post(url,{
+                    user: user,
+                    pwd: pwd
+                });
             },
             rooms: function () {
                 var url = host+'rooms';
                 console.log(url);
                 return $http.get(url);
             }
-        }
+        };
 
-        return obj;
     });
 
     // interface to socket.io
@@ -391,7 +393,6 @@
                                     $scope.validated(response);
                                 } else {
                                     utils.warn('Please enter credentials.');
-                                    return;
                                 }
                             });
                         } else {
@@ -577,6 +578,25 @@
         };
     });
 
+    app.directive('showUsers',function () {
+        return {
+            restrict: 'A',
+            scope: {},
+            link: function (scope, element, attrs) {
+                $(element).click(function () {
+                    //$('.chat-users-container').slideToggle();
+                    if (!scope.isVisible) {
+                        $('.chat-users-container').css('display','block');
+                        scope.isVisible = true;
+                    } else {
+                        $('.chat-users-container').removeAttr('style');
+                        scope.isVisible = false;
+                    }
+                });
+            }
+        };
+    });
+
     //app.directive('myScroll',function () {
     //    return {
     //        restrict: 'A',
@@ -586,23 +606,17 @@
     //    };
     //});
 
+    function resizeChatbar() {
+        var width = $('.chat-container').width();
+        console.log(width);
+        $('.chat-bar').css('width',width+'px');
+    }
 
     // register resize main container on document ready
-//    $( document ).ready(function() {
-//        $(window).on('resize', resizeContainer);
-//        resizeContainer();
-//    });
+    $( document ).ready(function() {
+        $(window).on('resize', resizeChatbar);
+        setTimeout(resizeChatbar,100);
+    });
 
-    // resize content area to window height and width (if width less than 1000)
-    function resizeContainer() {
-        var height = $(window).height();
-        var width = $(window).width();
-    //    console.log(height+"|"+width);
-        $('#content-container').css('height',height+'px');
-        width = (parseInt(width) > 1000) ? 1000 : width;
-        $('#content-container').css('width',width+'px');
-        var inj = angular.element('body').injector();
-        inj.get('utils').scrollChat();
-    }
 
 })();

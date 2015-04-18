@@ -7,61 +7,66 @@
                       data-myescape="cancelWhisper" data-myicon="comment" data-myholder="Comment" bounce="false">
             </my-input>
         </div>
-
     </div>
 
     <div class="chat-messages">
         <div class="row">
             <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container"  ng-show="showChat">
-                 <div class="row chat-row" data-ng-repeat="msg in chat">
-                        <div class="col-md-2 col-sm-2 col-xs-6">
+                 <div class="row chat-row soft-trans" data-ng-repeat="msg in chat">
+                     <div class="col-md-3 col-sm-3 col-xs-3  message-meta">
+                         <div class="chat-user">
                             <whisper-user username="username" msguser="msg.user" clickfn="whisperUser">
                             </whisper-user>
                             <div class="pm-user" data-ng-show="username===msg.user">{{msg.user}}</div>
-                        </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6 chat-time">{{msg.time}}</div>
-                        <div class="col-md-6 col-sm-6 col-xs-12 chat-message">{{msg.msg}}</div>
-
+                         </div>
+                         <div class="chat-time">{{msg.time}}</div>
+                     </div>
+                     <div class="col-md-9 col-sm-9 col-xs-9 chat-message">{{msg.msg}}</div>
                 </div>
             </div>
 
             <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container" ng-show="!showChat">
-                <div class="row chat-row" data-ng-repeat="msg in pm" >
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                        <whisper-user username="username" msguser="msg.from" clickfn="whisperUser">
-                        </whisper-user>
+                <div class="row chat-row soft-trans" data-ng-repeat="msg in pm" >
+                    <div class="col-md-3 col-sm-3 col-xs-3  message-meta">
+                        <div class="chat-user">
+                            <whisper-user username="username" msguser="msg.from" clickfn="whisperUser">
+                            </whisper-user>
+                        </div>
+                        <div class="chat-time">{{msg.time}}</div>
+                        <div ng-show="msg.read" class="chat-time">Read</div>
+                        <div ng-show="!msg.read" class="chat-time">New</div>
                     </div>
-                    <div class="col-md-2 col-sm-2 col-xs-2 chat-time">{{msg.time}}</div>
-                    <div ng-show="msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">Read</div>
-                    <div ng-show="!msg.read" class="col-md-1 col-sm-1 col-xs-1 chat-time">New</div>
-                    <div class="col-md-4 col-sm-4 col-xs-4 chat-message">{{msg.msg}}</div>
+
+                    <div class="col-md-6 col-sm-6 col-xs-6 chat-message">{{msg.msg}}</div>
                     <div class="col-md-3 col-sm-3 col-xs-3 pm-actions">
-                    <span  my-tooltip data-placement="bottom" title="Delete"
-                           data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand my-button">
-                    <paper-ripple fit></paper-ripple>
-                    </span>
-                    <span  my-tooltip data-placement="bottom" title="Mark Read"
-                           data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand my-button">
-                    <paper-ripple fit></paper-ripple>
-                    </span>
-                    <span  my-tooltip data-placement="bottom" title="Reply"
-                           data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand my-button">
-                    <paper-ripple fit></paper-ripple>
-                    </span>
+                        <span  my-tooltip data-placement="bottom" title="Delete"
+                               data-ng-click="PMDelete(msg,$index)" class="mdi mdi-delete pm-action hand my-button soft-trans">
+                        <paper-ripple fit></paper-ripple>
+                        </span>
+                        <span  my-tooltip data-placement="bottom" title="Mark Read"
+                               data-ng-click="PMRead(msg)" class="mdi mdi-email-open pm-action hand my-button soft-trans">
+                        <paper-ripple fit></paper-ripple>
+                        </span>
+                        <span  my-tooltip data-placement="bottom" title="Reply"
+                               data-ng-click="whisperUser(msg.from)" class="mdi mdi-reply pm-action hand my-button soft-trans">
+                        <paper-ripple fit></paper-ripple>
+                        </span>
                     </div>
                 </div>
             </div>
 
+            <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
+                <h5>Users</h5>
+                <div data-ng-repeat="user in users track by $index">
+                    <whisper-user username="username" msguser="user" clickfn="whisperUser">
+                    </whisper-user>
+                    <div class="pm-user" data-ng-show="username===user">{{user}}</div>
+                </div>
+            </div>
+
+
         </div>
 
-        <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
-            <h5>Users</h5>
-            <div data-ng-repeat="user in users track by $index">
-                <whisper-user username="username" msguser="user" clickfn="whisperUser">
-                </whisper-user>
-                <div class="pm-user" data-ng-show="username===user">{{user}}</div>
-            </div>
-        </div>
 
     </div>
 

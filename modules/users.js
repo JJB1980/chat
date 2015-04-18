@@ -92,19 +92,21 @@ obj.PMList = function (user) {
     return cache.get(user+'.messages') || [];
 };
 
-obj.updateToken = function (user,token) {
+obj.updateToken = function (user,token,ip) {
     var users = cache.get('users');
     var index = findUser(user);
     cache.values['users'][index].token = token;
+    cache.values['users'][index].ip = ip;
     obj.saveUsers();
 };
 
-obj.addUser = function (username,pwd,token) {
+obj.addUser = function (username,pwd,token,ip) {
     var usr = {
         name: username,
         pwd: pwd,
         access: 'user',
-        token: token
+        token: token,
+        ip: ip
     }    
     cache.values['users'].push(usr);
     obj.saveUsers();

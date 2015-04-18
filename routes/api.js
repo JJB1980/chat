@@ -1,3 +1,5 @@
+/* global module: true */
+
 var express = require('express');
 var router = express.Router();
 var rooms = require('../modules/rooms.js');
@@ -12,11 +14,12 @@ router.get('/rooms', function(req, res, next) {
 // get a user if they exist and password is correct
 router.get('/user', function(req, res, next) {
     var user = _users.getUser(req.query.user);
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     if (user) {
 //            console.log(users[i].name+"|"+req.query.pwd+"|"+users[i].pwd);
-        if ((req.query.pwd === user.pwd) || (req.query.token === user.token)) {
+        if ((req.query.pwd === user.pwd) || (req.query.token === user.token && user.ip === ip)) {
             var token = utils.uuid();
-            _users.updateToken(user.name,token);
+            _users.updateToken(user.name,token,ip);
             res.json({
                 exists: true,
                 login: true,
@@ -37,15 +40,15 @@ router.get('/user', function(req, res, next) {
 
 // register a user
 router.post('/user', function(req, res, next) {
-    var found = -1;
-    var username = req.query.user;
-    var pwd = req.query.pwd;
+    var username = req.body.user;
+    var pwd = req.body.pwd;
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     if (!utils.ok(username) || !utils.ok(pwd)) {
         res.json({error:'missing username or password'});
         return;
     }
     var token = utils.uuid();
-    _users.addUser(username,pwd,token);
+    _users.addUser(username,pwd,token,ip);
     res.json({
         exists: true,
         login: true,
