@@ -14,7 +14,10 @@
         <script src="components/webcomponentsjs/webcomponents.js"></script>
 
         <link rel="stylesheet" href="stylesheets/style.css">
-         <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+
+        <link rel="stylesheet" href="lib/scroll/css/perfect-scrollbar.css">
+
+        <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
 
         <link rel="import" href="components/font-roboto/roboto.html" >
         <link rel="stylesheet" href="components/mdi/css/materialdesignicons.css">
@@ -23,67 +26,93 @@
         <link rel="import" href="components/paper-shadow/paper-shadow.html">
         <!--<link rel="import" href="bower_components/paper-input/paper-input.html">-->
         <!--<link rel="import" href="lib/paper-input-decorator.html">-->
-        <link rel="import" href="components/paper-button/paper-button.html">        
+        <!--<link rel="import" href="components/core-elements/core-elements.html">-->
+        <link rel="import" href="components/paper-button/paper-button.html">
         <link rel="import" href="components/paper-toast/paper-toast.html">
         <link rel="import" href="components/core-drawer-panel/core-drawer-panel.html">
-        <link rel="import" href="components/core-header-panel/core-header-panel.html">
-        
+        <!--<link rel="import" href="components/core-header-panel/core-header-panel.html">-->
+        <link rel="import" href="components/core-collapse/core-collapse.html">
+        <link rel="import" href="components/core-dropdown/core-dropdown.html">
+        <link rel="import" href="components/core-icons/core-icons.html">
+        <link rel="import" href="components/core-icon-button/core-icon-button.html">
+        <!--<link rel="import" href="components/core-item/core-item.html">-->
+        <!--<link rel="import" href="components/core-menu/core-menu.html">-->
+        <!--<link rel="import" href="components/core-menu-button/core-menu-button.html">-->
+        <!--<link rel="import" href="components/core-transition/core-transition.html">-->
+
     </head>
 
-    <body data-ng-app="ChatApp" data-ng-controller="ApplicationCtrl">
+    <body data-ng-app="ChatApp" data-ng-controller="applicationController">
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <core-drawer-panel>
-            <div drawer>
+            <div id="main-drawer" drawer ng-if="loggedin">
                 <div id="my-progress"></div>
                 <my-rooms></my-rooms>
             </div>
-            <div main>
-                <core-header-panel mode="waterfall">
-                    <div class="core-header">
-                         <span core-drawer-toggle class="mdi mdi-menu hand my-menu-btn soft-trans">
-                            <paper-ripple core-drawer-toggle fit></paper-ripple>
+
+            <div main >
+                <div id="main-header" ng-if="loggedin">
+
+                    <span core-drawer-toggle class="mdi mdi-menu hand my-menu-btn soft-trans">
+                        <paper-ripple core-drawer-toggle fit></paper-ripple>
+                    </span>
+                    <div id="title-room">
+                        <span data-ng-show="showChat">Current Room: <i>{{currentRoom}}</i></span>
+                        <span data-ng-show="!showChat">My Messages</span>
+                    </div>
+                    <div id="title-messages">
+
+                        <span show-users my-tooltip data-placement="bottom" title="Users" id="title-users"
+                              class="mdi mdi-account hand my-menu-btn soft-trans">
+                        <paper-ripple fit></paper-ripple>
                         </span>
-                        <div id="title-room">
-                            <span data-ng-show="showChat">Current Room: <i>{{currentRoom}}</i></span>
-                            <span data-ng-show="!showChat">My Messages</span>
-                        </div>
-                        <div id="title-messages">
 
-                            <span show-users my-tooltip data-placement="bottom" title="Users" id="title-users"
-                                  class="mdi mdi-account hand my-menu-btn soft-trans">
+                        <span data-ng-show="!showChat" data-ng-click="showMessages()"
+                             my-tooltip data-placement="bottom" title="Back"
+                             class="mdi mdi-message-processing hand my-menu-btn soft-trans">
                             <paper-ripple fit></paper-ripple>
-                            </span>
+                        </span>
+                        <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
+                              my-tooltip data-placement="bottom" title="No Messages"
+                              class="mdi mdi-email-outline hand my-menu-btn soft-trans">
+                            <paper-ripple fit></paper-ripple>
+                        </span>
+                        <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
+                              my-tooltip data-placement="bottom" title="New Messages"
+                              class="mdi mdi-email hand my-menu-btn soft-trans">
+                            <paper-ripple fit></paper-ripple>
+                        </span>
+                        <span data-ng-show="unread>0&&showChat" class="my-menu-btn">({{unread}})</span>
 
-                           <span data-ng-show="!showChat" data-ng-click="showMessages()"
-                                 my-tooltip data-placement="bottom" title="Back"
-                                 class="mdi mdi-redo hand my-menu-btn soft-trans">
-                                <paper-ripple fit></paper-ripple>
-                            </span>
-                            <span data-ng-show="unread===0&&showChat" data-ng-click="showMessages()"
-                                  my-tooltip data-placement="bottom" title="No Messages"
-                                  class="mdi mdi-email-outline hand my-menu-btn soft-trans">
-                                <paper-ripple fit></paper-ripple>
-                            </span>
-                            <span data-ng-show="unread>0&&showChat" data-ng-click="showMessages()"
-                                  my-tooltip data-placement="bottom" title="New Messages"
-                                  class="mdi mdi-email hand my-menu-btn soft-trans">
+                        <span id="title-menu" menu-open
+                              class="mdi mdi-dots-vertical hand my-menu-btn soft-trans">
                             <paper-ripple fit></paper-ripple>
-                            </span>
-                            <span data-ng-show="unread>0&&showChat" class="my-menu-btn">({{unread}})</span>
-                        </div>
-                        <div id="title-user">
-                            <my-user></my-user>
-                        </div>
+                        </span>
 
 
                     </div>
-                    <div class="content">
-                        <div data-ui-view=""></div>
+                    <div id="title-user">
+                        <my-user></my-user>
                     </div>
-                </core-header-panel>
+
+                </div>
+
+                <core-dropdown id="menu-dropdown">
+                    <span menu-open class="menu-item hand" data-ng-click="signout()">
+                        Signout <paper-ripple fit></paper-ripple>
+                    </span>
+                    <span menu-open class="menu-item hand" data-ng-click="">
+                        Settings <paper-ripple fit></paper-ripple>
+                    </span>
+                </core-dropdown>
+
+                <div id="content">
+                    <div data-ui-view=""></div>
+                </div>
+
             </div>
         </core-drawer-panel>
 
@@ -98,8 +127,13 @@
         <script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
         
         <script src="/socket.io/socket.io.js"></script>
-               
+
+        <script src="lib/scroll/js/perfect-scrollbar.jquery.js"></script>
+
         <script src="javascripts/app.js"></script>
+        <script src="javascripts/controllers.js"></script>
+        <script src="javascripts/directives.js"></script>
+        <script src="javascripts/services.js"></script>
 
  
     </body>

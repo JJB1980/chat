@@ -20,8 +20,10 @@
 
 @main-colour: #C2C2D6;
 
+@my-font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
 body {
-//  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: @my-font;
     background-color: #F5FAFF !important;
 }
 
@@ -32,6 +34,7 @@ h4, h2, h3, h5 {
 
 h4 {
     font-size: @hd-f-sz;
+    padding-left: 1em;
 }
 
 a {
@@ -175,11 +178,12 @@ a {
 
 /* chat messages and user list */
 
-.chat-bar {
+#chat-bar {
     width: 100%;
     min-height: 3.5em;
     position: fixed;
     z-index: 10;
+    top: 60px;
     border-bottom: @borders;
     background-color: #E0E0EB;
     -webkit-box-shadow: 2px 3px 5px 0px rgba(50, 54, 59, 0.4);
@@ -192,26 +196,32 @@ a {
     float: left;
 }
 
-.chat-container {
-    padding: 0em !important;
+#chat-messages-container {
     width: 100%;
+    height: 75vh;
     position: relative;
 }
-.chat-messages {
-    max-width: 700px;
+
+#chat-messages {
+    //max-width: 700px;
     position: relative;
-    top: 4em;
+    top: 125px;
     border-left: @borders;
     padding-left: 1em;
+    width: 100%;
+    height: 75vh;
+    overflow: hidden;
+    overflow-x: hidden;
+
     //z-index: 5;
 }
 
 .chat-users-container {
     padding: 1em !important;
-    //position: fixed !important;
-    //top: 7em;
+    position: fixed !important;
+    top: 7em;
     right: 10px;
-    width: 18% !important;
+    width: 15% !important;
     display: block;
 }
 
@@ -219,10 +229,20 @@ a {
     font-weight: bold;
     font-size: 0.8em;
     font-style: italic;
-    padding-top: 0.5em;
-     padding-bottom: 0.5em;
+    //padding-top: 0.5em;
+    // padding-bottom: 0.5em;
+    padding: 0.5em;
     position: relative;
-    width: 100%;
+    width: 100% !important;
+    -webkit-transition: color 200ms linear;
+    -moz-transition: color 200ms linear;
+    -o-transition: color 200ms linear;
+    -ms-transition: color 200ms linear;
+    transition: color 200ms linear;
+
+}
+.pm-user-hov:hover {
+    color: #0066FF;
 }
 
 .chat-row {
@@ -301,10 +321,12 @@ a {
 
 // custom buttons
 .my-button, .my-menu-btn {
-    border-radius: 5px;
+    border-radius: 2px;
     position: relative;
+    margin-right: 2px;
 }
-.my-button paper-ripple, .my-menu-btn paper-ripple {
+
+paper-ripple {
     //border-radius: 50%;
     position: relative;
 }
@@ -336,34 +358,28 @@ paper-toast {
     //    background-color: #4F7DC9;
 }
 
-core-header-panel {
-      float: left;
-      width: 100%;
-      height: 100%;
-      margin: 0px;
-}
 
-core-header-panel[mode=cover]::shadow #mainContainer {
-  left: 70px;
-}
-
-.core-header {
-  height: 60px;
-  line-height: 60px;
-  font-size: @hd-f-sz;
-  padding: 0 10px;
-  background-color: @md-bg;
-  color: @md-fg;
-  transition: height 0.2s;
-}
-
-
-.content {
-    min-height: 100%;
-    //background: linear-gradient(rgb(214, 227, 231), @main-colour);
+#content {
     background-color: transparent;
     position: relative;
-    z-index: 2;
+    //z-index: 2;
+}
+
+core-drawer-panel {
+    position: absolute;
+}
+#main-header {
+    height: 60px;
+    line-height: 60px;
+    font-size: @hd-f-sz;
+    padding: 0 10px;
+    background-color: @md-bg;
+    color: @md-fg;
+    //transition: height 0.2s;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    z-index: 10;
 }
 
 
@@ -381,6 +397,11 @@ core-header-panel[mode=cover]::shadow #mainContainer {
 }
 #title-messages {
     float: right;
+    position: relative;
+}
+#title-menu {
+    float: right;
+    position: relative;
 }
 .my-menu-btn {
     font-size: 1.5em !important;
@@ -392,21 +413,51 @@ core-header-panel[mode=cover]::shadow #mainContainer {
     top: 0.2em;
 }
 
+#menu-dropdown {
+    z-index: 50;
+    position: fixed;
+    right: 20px;
+    top: 50px;
+    width: 80px;
+}
 
 // media queries
 @media all and (max-width: 600px) {
     .chat-users-container {
         //right: 3em;
-        display: none;
         position: fixed !important;
         overflow-x: auto;
         right: 20px;
         top: 100px;
-        min-width: 120px;
+        right: 0px;
+        width: 0px !important;
+        //padding: 0.5em !important;
+        //min-width: 120px;
         min-height: 100% !important;
-        border-left: @borders;
+        border-left: none;
+        padding: 0px !important;
+        padding-top: 1em !important;
+        //margin-left: 0px;
+        //margin-right: 0px;
+        //border: none;
         opacity: 1;
         background-color: white;
+    }
+
+    .chat-users-open {
+        border-left: @borders;
+        padding-left: 1em !important;
+        padding-right: 1em !important;
+        width: 120px !important;
+        //padding: 0.5em !important;
+    }
+
+    .ease-width {
+        -webkit-transition: width 0.5s ease-in-out, padding-left 0.5s ease-in-out, padding-right 0.5s ease-in-out;
+        -moz-transition: width 0.5s ease-in-out, padding-left 0.5s ease-in-out, padding-right 0.5s ease-in-out;
+        -o-transition: width 0.5s ease-in-out, padding-left 0.5s ease-in-out, padding-right 0.5s ease-in-out;
+        transition: width 0.5s ease-in-out, padding-left 0.5s ease-in-out, padding-right 0.5s ease-in-out;
+
     }
     .chat-messages-container {
         width: 100% !important;
@@ -417,9 +468,17 @@ core-header-panel[mode=cover]::shadow #mainContainer {
     #title-users {
         display: block;
     }
+
 }
-@media all and (min-width: 600px) {
-    .chat-users-container {
-        display: block;
-    }
+
+
+
+.menu-item {
+    display: block;
+    width: 100%;
+    color: black;
+    font-size: 0.7em;
+    position: relative;
+    padding: 15px;
+    font: @my-font;
 }

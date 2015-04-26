@@ -1,18 +1,19 @@
 
-<div class="chat-container" >
-
-    <div class="chat-bar">
-        <div class="chat-bar-comment">
-            <my-input data-myvalue="comment" data-myenter="submitComment" data-mytype="text" data-mymessage="whisperTo"
-                      data-myescape="cancelWhisper" data-myicon="comment" data-myholder="Comment" bounce="false">
-            </my-input>
-        </div>
+<div id="chat-bar">
+    <div class="chat-bar-comment">
+        <my-input data-myvalue="comment" data-myenter="submitComment" data-mytype="text" data-mymessage="whisperTo"
+                  data-myescape="cancelWhisper" data-myicon="message" data-myholder="Comment" bounce="false">
+        </my-input>
     </div>
+</div>
 
-    <div class="chat-messages">
+<div id="chat-messages-container" >
+
+    <div id="chat-messages" my-scroll >
         <div class="row">
-            <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container"  ng-show="showChat">
+            <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container"   ng-show="showChat">
                  <div class="row chat-row soft-trans" data-ng-repeat="msg in chat">
+
                      <div class="col-md-3 col-sm-3 col-xs-3  message-meta">
                          <div class="chat-user">
                             <whisper-user username="username" msguser="msg.user" clickfn="whisperUser">
@@ -22,10 +23,11 @@
                          <div class="chat-time">{{msg.time}}</div>
                      </div>
                      <div class="col-md-9 col-sm-9 col-xs-9 chat-message">{{msg.msg}}</div>
+
                 </div>
             </div>
 
-            <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container" ng-show="!showChat">
+            <div class="col-md-9 col-sm-9 col-xs-9 chat-messages-container"  ng-show="!showChat">
                 <div class="row chat-row soft-trans" data-ng-repeat="msg in pm" >
                     <div class="col-md-3 col-sm-3 col-xs-3  message-meta">
                         <div class="chat-user">
@@ -55,24 +57,17 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-3 col-xs-3 chat-users-container">
-                <h5>Users</h5>
-                <div data-ng-repeat="user in users track by $index">
-                    <whisper-user username="username" msguser="user" clickfn="whisperUser">
-                    </whisper-user>
-                    <div class="pm-user" data-ng-show="username===user">{{user}}</div>
-                </div>
-            </div>
-
-
         </div>
-
-
     </div>
+</div>
 
-
-
-
+<div id="chat-users" class="col-md-3 col-sm-3 col-xs-3 chat-users-container ease-width">
+    <h5>Users</h5>
+    <div data-ng-repeat="user in users track by $index">
+        <whisper-user username="username" msguser="user" clickfn="whisperUser">
+        </whisper-user>
+        <div class="pm-user" data-ng-show="username===user">{{user}}</div>
+    </div>
 </div>
 
 
