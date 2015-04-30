@@ -19,7 +19,7 @@
         <div data-ng-repeat="room in rooms" >
             <div class="my-room hand soft-trans"
                  data-ng-click="changeRoom(room,$index)"
-                 data-ng-class="{ 'current-room': currentRoom === $index }" >
+                 data-ng-class="{ 'current-room': currentRoomIndex === $index }" >
                 <span class="room-icon mdi mdi-{{room.icon}}"></span>
                 <span class="room-name">{{room.name}}</span>
                 <paper-ripple fit></paper-ripple>

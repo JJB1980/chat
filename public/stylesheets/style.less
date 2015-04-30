@@ -24,7 +24,7 @@
 
 body {
     font: @my-font;
-    background-color: #F5FAFF !important;
+    background-color: #E0E0EB !important;
 }
 
 h4, h2, h3, h5 {
@@ -386,7 +386,7 @@ core-drawer-panel {
 // nav bar
 #title-room {
     float: left;
-    width: 10em;
+    //width: 10em;
 }
 #title-user {
     float: right;
@@ -402,6 +402,13 @@ core-drawer-panel {
 #title-menu {
     float: right;
     position: relative;
+}
+#title-unread-messages {
+    font-size: 0.8em;
+    position: absolute;
+    z-index: 50;
+    top: -10px;
+    left: 25px;
 }
 .my-menu-btn {
     font-size: 1.5em !important;
@@ -481,4 +488,15 @@ core-drawer-panel {
     position: relative;
     padding: 15px;
     font: @my-font;
+}
+
+
+
+/* login styles */
+#login-form {
+    width: 20em;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    position: relative;
+    margin-top: 10vh !important;
 }

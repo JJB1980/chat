@@ -48,19 +48,19 @@
         <![endif]-->
 
         <core-drawer-panel>
-            <div id="main-drawer" drawer ng-if="loggedin">
+            <div id="main-drawer" drawer ng-show="loggedin">
                 <div id="my-progress"></div>
                 <my-rooms></my-rooms>
             </div>
 
             <div main >
-                <div id="main-header" ng-if="loggedin">
+                <div id="main-header" ng-show="loggedin">
 
                     <span core-drawer-toggle class="mdi mdi-menu hand my-menu-btn soft-trans">
                         <paper-ripple core-drawer-toggle fit></paper-ripple>
                     </span>
                     <div id="title-room">
-                        <span data-ng-show="showChat">Current Room: <i>{{currentRoom}}</i></span>
+                        <span data-ng-show="showChat"><i>{{currentRoom}}</i></span>
                         <span data-ng-show="!showChat">My Messages</span>
                     </div>
                     <div id="title-messages">
@@ -85,7 +85,7 @@
                               class="mdi mdi-email hand my-menu-btn soft-trans">
                             <paper-ripple fit></paper-ripple>
                         </span>
-                        <span data-ng-show="unread>0&&showChat" class="my-menu-btn">({{unread}})</span>
+                        <span data-ng-show="unread>0&&showChat" id="title-unread-messages">{{unread}}</span>
 
                         <span id="title-menu" menu-open
                               class="mdi mdi-dots-vertical hand my-menu-btn soft-trans">
@@ -94,14 +94,14 @@
 
 
                     </div>
-                    <div id="title-user">
-                        <my-user></my-user>
-                    </div>
+                    <!--<div id="title-user">-->
+                        <!--<my-user></my-user>-->
+                    <!--</div>-->
 
                 </div>
 
-                <core-dropdown id="menu-dropdown">
-                    <span menu-open class="menu-item hand" data-ng-click="signout()">
+                <core-dropdown id="menu-dropdown" ng-show="loggedin">
+                    <span menu-open class="menu-item hand" onclick="angular.element(document.body).scope().signout()">
                         Signout <paper-ripple fit></paper-ripple>
                     </span>
                     <span menu-open class="menu-item hand" data-ng-click="">
@@ -115,7 +115,6 @@
 
             </div>
         </core-drawer-panel>
-
 
         <paper-toast id="mainToast" text="{{toastMessage}}"></paper-toast>
                 

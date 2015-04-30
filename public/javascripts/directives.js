@@ -22,15 +22,15 @@
                 });
                 // notify of room change
                 $scope.changeRoom = function (room, index) {
-                    $scope.currentRoom = index;
+                    $scope.currentRoomIndex = index;
                     //                console.log(room);
                     $rootScope.$broadcast('room.change', room.name);
                     utils.closeDrawer();
                 };
                 // set room if stored on server
                 io.socket.on('user.registered', function (event, data) {
-                    console.log('user.registered');
-                    console.log(data);
+                    //console.log('user.registered');
+                    //console.log(data);
                     var found = false;
                     if (data) {
                         for (var i = 0; i < $scope.rooms.length; i++) {
@@ -64,7 +64,7 @@
                     }, 200);
                 });
                 // hide rooms when room selected.
-                scope.$watch('currentRoom', function () {
+                scope.$watch('currentRoomIndex', function () {
                     if (!element.find('.rooms-hide').hasClass('hidden-sm')) {
                         element.find('.rooms-hide').trigger('click');
                     }
@@ -77,7 +77,7 @@
         return {
             restrict: 'E',
             templateUrl: 'partials/userDirective.html',
-            controller: function ($scope, $rootScope, store, utils, comms, io) {
+            controller: function ($scope, $rootScope, store, utils, comms, io, user) {
                 $scope.errors = {};
                 $scope.username = store.get('username') || '';
                 $scope.token = store.get('token') || '';
@@ -102,7 +102,7 @@
                 $scope.changePassword = function () {
                     $scope.errors.username = false;
                     $scope.errors.password = false;
-                    console.log($scope.pword);
+                    //console.log($scope.pword);
                     if (!utils.ok($scope.username)) {
                         $scope.errors.username = true;
                     }
@@ -113,10 +113,9 @@
                         $scope.pwd = window.btoa($scope.username + ':' + $scope.pword);
                         if ($scope.setpwd) {
                             comms.pwd($scope.username, ($scope.pwd !== undefined ? $scope.pwd : '')).success(function (response) {
-                                console.log('user.pwd');
-                                console.log($scope.username);
-                                console.log(response);
-
+                                //console.log('user.pwd');
+                                //console.log($scope.username);
+                                //console.log(response);
                                 if (response.exists && response.login) {
                                     $scope.validated(response);
                                 } else {
@@ -131,16 +130,16 @@
                 // authenticate user to server.  display messages on exceptions
                 $scope.authenticate = function () {
                     comms.connect($scope.username, ($scope.pwd !== undefined ? $scope.pwd : ''), $scope.token).success(function (response) {
-                        console.log('user.authenticate');
-                        console.log($scope.username);
-                        console.log(response);
+                        //console.log('user.authenticate');
+                        //console.log($scope.username);
+                        //console.log(response);
                         $scope.auth = false;
                         if (response.exists && response.setpwd) {
                             $scope.setpwd = true;
                             utils.warn('Set your password');
                             return;
                         } else if (response.exists && !response.login) {
-                            utils.warn('Enter your password');
+                            utils.warn('Invalid password');
                             return;
                         }
                         if (!response.exists) {
@@ -158,18 +157,11 @@
                 $scope.validated = function (response) {
                     $scope.auth = true;
                     $scope.setpwd = false;
-                    store.set('username', $scope.username);
-                    store.set('access', response.access);
-                    store.set('token', response.token);
-                    io.emit('user.register', {
-                        user: $scope.username,
-                        token: response.token
-                    });
-                    $rootScope.$broadcast('user.login', $scope.username);
+                    user.validated(response,$scope.username);
                 };
-                if ($scope.username !== '') {
-                    $scope.authenticate();
-                }
+                //if ($scope.username !== '') {
+                //    $scope.authenticate();
+                //}
             }
         };
     });
@@ -222,7 +214,7 @@
                 element.find('.my-input').bind("keypress", function (event) {
                     //                console.log(event);
                     if (event.which === 13 && scope.myenter) {
-                        console.log('key.enter');
+                        //console.log('key.enter');
                         scope.$apply(function () {
                             scope.myvalue = element.find('.my-input').val();
                             scope.myenter();
@@ -231,7 +223,7 @@
                     } else {
                         setTimeout(function () {
                             scope.$apply(function () {
-                                console.log('val:' + element.find('.my-input').val());
+                                //console.log('val:' + element.find('.my-input').val());
                                 scope.myvalue = element.find('.my-input').val(); // + String.fromCharCode(event.which);
                                 if (scope.mychange) {
                                     scope.mychange();
@@ -242,7 +234,7 @@
                 });
                 element.find('.my-input').bind("keyup", function (event) {
                     if (event.which === 27 && scope.myescape) {
-                        console.log('key.esc');
+                        //console.log('key.esc');
                         scope.$apply(function () {
                             scope.myvalue = '';
                             scope.myescape();
@@ -286,7 +278,7 @@
                     if (!scope.dropdown) {
                         scope.dropdown = document.getElementById('menu-dropdown');
                     }
-                    console.log(scope.dropdown);
+                    //console.log(scope.dropdown);
                     scope.dropdown && scope.dropdown.toggle();
                 });
             }

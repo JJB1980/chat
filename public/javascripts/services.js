@@ -6,8 +6,29 @@
 
     var app = window.app;
 
+    app.service('user', function ($rootScope, utils, store, $timeout, io) {
+        return {
+            name: function () {
+                return store.get('username') || '';
+            },
+            token: function () {
+                return store.get('token') || '';
+            },
+            validated: function (response, username) {
+                store.set('username', username);
+                store.set('access', response.access);
+                store.set('token', response.token);
+                $rootScope.$broadcast('user.login', username);
+                io.connect();
+                $timeout(function () {
+                    utils.setPage('home');
+                },100);
+            }
+        };
+    });
+
     // utility service
-    app.service('utils', function ($rootScope) {
+    app.service('utils', function ($rootScope, $state) {
         return {
             ok: function (value) {
                 return (value !== "" && value !== null && value !== undefined) ? true : false;
@@ -36,6 +57,9 @@
             },
             closeDrawer: function () {
                 document.getElementsByTagName('core-drawer-panel')[0].closeDrawer();
+            },
+            setPage: function (page) {
+                $state.transitionTo(page);
             }
         };
     });
@@ -93,6 +117,14 @@
             } else {
                 this.socket.emit(event,data);
             }
+        };
+
+        obj.disconnect = function () {
+            this.socket.close();
+        };
+
+        obj.connect = function () {
+            this.socket.connect();
         };
 
         obj.socket.on('user.joined',function (data) {

@@ -1,6 +1,6 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #F5FAFF !important;
+  background-color: #E0E0EB !important;
 }
 h4,
 h2,
@@ -282,7 +282,6 @@ core-drawer-panel {
 }
 #title-room {
   float: left;
-  width: 10em;
 }
 #title-user {
   float: right;
@@ -298,6 +297,13 @@ core-drawer-panel {
 #title-menu {
   float: right;
   position: relative;
+}
+#title-unread-messages {
+  font-size: 0.8em;
+  position: absolute;
+  z-index: 50;
+  top: -10px;
+  left: 25px;
 }
 .my-menu-btn {
   font-size: 1.5em !important;
@@ -360,4 +366,12 @@ core-drawer-panel {
   position: relative;
   padding: 15px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+/* login styles */
+#login-form {
+  width: 20em;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  position: relative;
+  margin-top: 10vh !important;
 }
