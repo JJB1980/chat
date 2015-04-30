@@ -37,7 +37,9 @@
                 //            LxNotificationService.info(message);
                 //            $rootScope.toastMessage = "<span class='mdi mdi-alert-circle'></span> " + message;
                 $rootScope.toastMessage = message;
-                document.querySelector('#mainToast').show();
+                setTimeout(function () {
+                    document.querySelector('#mainToast').show();
+                },100);
             },
             warn: function (message) {
                 //            LxNotificationService.warning(message);

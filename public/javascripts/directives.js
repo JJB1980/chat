@@ -79,8 +79,8 @@
             templateUrl: 'partials/userDirective.html',
             controller: function ($scope, $rootScope, store, utils, comms, io, user) {
                 $scope.errors = {};
-                $scope.username = store.get('username') || '';
-                $scope.token = store.get('token') || '';
+                $scope.username = user.name();
+                $scope.token = user.token();
                 $scope.pword = '';
                 $scope.setpwd = false;
                 io.socket.on('user.not.authorised', function (event, data) {

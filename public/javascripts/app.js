@@ -35,9 +35,13 @@
     // register resize main container on document ready
     $( document ).ready(function() {
         $(window).on('resize', window.resizeChatbar);
-        setTimeout(window.resizeChatbar,500);
+        //setTimeout(window.resizeChatbar,500);
         //resizeChatbar();
 
+    });
+
+    window.addEventListener('polymer-ready', function(e) {
+        setTimeout(window.resizeChatbar,500);
     });
 
 })();

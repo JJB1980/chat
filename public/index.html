@@ -101,7 +101,7 @@
                 </div>
 
                 <core-dropdown id="menu-dropdown" ng-show="loggedin">
-                    <span menu-open class="menu-item hand" onclick="angular.element(document.body).scope().signout()">
+                    <span menu-open class="menu-item hand" data-ng-click="signout()">
                         Signout <paper-ripple fit></paper-ripple>
                     </span>
                     <span menu-open class="menu-item hand" data-ng-click="">

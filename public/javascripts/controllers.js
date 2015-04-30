@@ -25,8 +25,8 @@
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
             if (toState.name === 'home') {
-                //console.log('state.change.success:resize');
-                setTimeout(window.resizeChatbar,100);
+                console.log('state.change.success:resize');
+                setTimeout(window.resizeChatbar,500);
             }
         });
 
