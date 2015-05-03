@@ -27,7 +27,6 @@
 
     window.resizeChatbar = function () {
         var width = $('#chat-messages-container').width();
-        //console.log(width);
         $('#chat-bar').css('width',width+'px');
         $('#main-header').css('width',width+'px');
     }
@@ -35,9 +34,6 @@
     // register resize main container on document ready
     $( document ).ready(function() {
         $(window).on('resize', window.resizeChatbar);
-        //setTimeout(window.resizeChatbar,500);
-        //resizeChatbar();
-
     });
 
     window.addEventListener('polymer-ready', function(e) {

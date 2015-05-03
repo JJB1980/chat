@@ -165,11 +165,11 @@ function minErr(module, ErrorConstructor) {
  *
  * # ng (core module)
  * The ng module is loaded by default when an AngularJS application is started. The module itself
- * contains the essential components for an AngularJS application to function. The table below
+ * contains the essential library for an AngularJS application to function. The table below
  * lists a high level breakdown of each of the services/factories, filters, directives and testing
- * components available within this core module.
+ * library available within this core module.
  *
- * <div doc-module-components="ng"></div>
+ * <div doc-module-library="ng"></div>
  */
 
 var REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
@@ -3694,7 +3694,7 @@ function annotate(fn, strictDi, name) {
  *
  * @description
  *
- * The {@link auto.$provide $provide} service has a number of methods for registering components
+ * The {@link auto.$provide $provide} service has a number of methods for registering library
  * with the {@link auto.$injector $injector}. Many of these functions are also exposed on
  * {@link angular.Module}.
  *
@@ -5896,7 +5896,7 @@ function $TemplateCacheProvider() {
  *
  * **If set to `{}` (object hash),** then a new "isolate" scope is created. The 'isolate' scope differs from
  * normal scope in that it does not prototypically inherit from the parent scope. This is useful
- * when creating reusable components, which should not accidentally read or modify data in the
+ * when creating reusable library, which should not accidentally read or modify data in the
  * parent scope.
  *
  * The 'isolate' scope takes an object hash which defines a set of local scope properties
@@ -6051,7 +6051,7 @@ function $TemplateCacheProvider() {
  * Directives Guide} for an example.
  *
  * There are very few scenarios where element replacement is required for the application function,
- * the main one being reusable custom components that are used within SVG contexts
+ * the main one being reusable custom library that are used within SVG contexts
  * (because SVG doesn't work with custom elements in the DOM tree).
  *
  * #### `transclude`
@@ -10464,7 +10464,7 @@ function $IntervalProvider() {
  * @name $locale
  *
  * @description
- * $locale service provides localization rules for various Angular components. As of right now the
+ * $locale service provides localization rules for various Angular library. As of right now the
  * only public api is:
  *
  * * `id` – `{string}` – locale id formatted as `languageId-countryId` (e.g. `en-us`)
@@ -16366,7 +16366,7 @@ var originUrl = urlResolve(window.location.href);
  * Implementation Notes for IE
  * ---------------------------
  * IE >= 8 and <= 10 normalizes the URL when assigned to the anchor node similar to the other
- * browsers.  However, the parsed components will not be set if the URL assigned did not specify
+ * browsers.  However, the parsed library will not be set if the URL assigned did not specify
  * them.  (e.g. if you assign a.href = "foo", then a.protocol, a.host, etc. will be empty.)  We
  * work around that by performing the parsing in a 2nd step by taking a previously normalized
  * URL (e.g. by assigning to a.href) and assigning it a.href again.  This correctly populates the
@@ -21102,7 +21102,7 @@ var ngCloakDirective = ngDirective({
  * The `ngController` directive attaches a controller class to the view. This is a key aspect of how angular
  * supports the principles behind the Model-View-Controller design pattern.
  *
- * MVC components in angular:
+ * MVC library in angular:
  *
  * * Model — Models are the properties of a scope; scopes are attached to the DOM where scope properties
  *   are accessed through bindings.
@@ -24816,7 +24816,7 @@ var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
       </div>
     </file>
     <file name="glyphicons.css">
-      @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
+      @import url(../../library/bootstrap-3.1.1/css/bootstrap.css);
     </file>
     <file name="animations.css">
       .animate-show {
@@ -24981,7 +24981,7 @@ var ngShowDirective = ['$animate', function($animate) {
       </div>
     </file>
     <file name="glyphicons.css">
-      @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
+      @import url(../../library/bootstrap-3.1.1/css/bootstrap.css);
     </file>
     <file name="animations.css">
       .animate-hide {

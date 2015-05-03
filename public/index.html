@@ -11,34 +11,34 @@
         <link rel="shortcut icon" href="favicon.ico?v=1" type="image/x-icon">
         <link rel="icon" href="favicon.ico?v=1" type="image/x-icon">
   
-        <script src="components/webcomponentsjs/webcomponents.js"></script>
+        <script src="library/webcomponentsjs/webcomponents.js"></script>
 
         <link rel="stylesheet" href="stylesheets/style.css">
 
         <link rel="stylesheet" href="lib/scroll/css/perfect-scrollbar.css">
 
-        <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="library/bootstrap/dist/css/bootstrap.min.css">
 
-        <link rel="import" href="components/font-roboto/roboto.html" >
-        <link rel="stylesheet" href="components/mdi/css/materialdesignicons.css">
+        <link rel="import" href="library/font-roboto/roboto.html" >
+        <link rel="stylesheet" href="library/mdi/css/materialdesignicons.css">
 
-        <link rel="import" href="components/paper-ripple/paper-ripple.html">
-        <link rel="import" href="components/paper-shadow/paper-shadow.html">
+        <link rel="import" href="library/paper-ripple/paper-ripple.html">
+        <link rel="import" href="library/paper-shadow/paper-shadow.html">
         <!--<link rel="import" href="bower_components/paper-input/paper-input.html">-->
         <!--<link rel="import" href="lib/paper-input-decorator.html">-->
-        <!--<link rel="import" href="components/core-elements/core-elements.html">-->
-        <link rel="import" href="components/paper-button/paper-button.html">
-        <link rel="import" href="components/paper-toast/paper-toast.html">
-        <link rel="import" href="components/core-drawer-panel/core-drawer-panel.html">
-        <!--<link rel="import" href="components/core-header-panel/core-header-panel.html">-->
-        <link rel="import" href="components/core-collapse/core-collapse.html">
-        <link rel="import" href="components/core-dropdown/core-dropdown.html">
-        <link rel="import" href="components/core-icons/core-icons.html">
-        <link rel="import" href="components/core-icon-button/core-icon-button.html">
-        <!--<link rel="import" href="components/core-item/core-item.html">-->
-        <!--<link rel="import" href="components/core-menu/core-menu.html">-->
-        <!--<link rel="import" href="components/core-menu-button/core-menu-button.html">-->
-        <!--<link rel="import" href="components/core-transition/core-transition.html">-->
+        <!--<link rel="import" href="library/core-elements/core-elements.html">-->
+        <link rel="import" href="library/paper-button/paper-button.html">
+        <link rel="import" href="library/paper-toast/paper-toast.html">
+        <link rel="import" href="library/core-drawer-panel/core-drawer-panel.html">
+        <!--<link rel="import" href="library/core-header-panel/core-header-panel.html">-->
+        <link rel="import" href="library/core-collapse/core-collapse.html">
+        <link rel="import" href="library/core-dropdown/core-dropdown.html">
+        <link rel="import" href="library/core-icons/core-icons.html">
+        <link rel="import" href="library/core-icon-button/core-icon-button.html">
+        <!--<link rel="import" href="library/core-item/core-item.html">-->
+        <!--<link rel="import" href="library/core-menu/core-menu.html">-->
+        <!--<link rel="import" href="library/core-menu-button/core-menu-button.html">-->
+        <!--<link rel="import" href="library/core-transition/core-transition.html">-->
 
     </head>
 
@@ -119,11 +119,11 @@
         <paper-toast id="mainToast" text="{{toastMessage}}"></paper-toast>
                 
   
-        <script src="components/jquery/dist/jquery.js"></script>
-        <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="library/jquery/dist/jquery.js"></script>
+        <script src="library/bootstrap/dist/js/bootstrap.min.js"></script>
 
-        <script src="components/angular/angular.js"></script>
-        <script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
+        <script src="library/angular/angular.js"></script>
+        <script src="library/angular-ui-router/release/angular-ui-router.min.js"></script>
         
         <script src="/socket.io/socket.io.js"></script>
 
@@ -134,7 +134,14 @@
         <script src="javascripts/directives.js"></script>
         <script src="javascripts/services.js"></script>
 
- 
+
+        <script src="components/input/api.js"></script>
+        <link rel="stylesheet" href="components/input/style.css">
+        <script src="components/rooms/api.js"></script>
+        <link rel="stylesheet" href="components/rooms/style.css">
+        <script src="components/user/api.js"></script>
+
+
     </body>
     
 </html>

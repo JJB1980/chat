@@ -1,0 +1,68 @@
+
+
+@import "../../stylesheets/globals.less";
+
+/* myInput directive */
+.input-icon {
+  width: 10%;
+  color: @default-colour;
+  text-align: center;
+  font-size: 1.2em !important;
+  position: relative;
+  top: 0.2em;
+}
+
+.icon-dark {
+  color: @dark-fg;
+}
+
+.my-input-container {
+  padding-top: 0.5em;
+}
+
+.my-input {
+  width: 80%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin-left: 0.5em;
+}
+
+.input-bottom {
+  height: 1px;
+  width: 80%;
+  margin-left: 11%;
+  background-color: @default-colour;
+  margin-top: 0.2em;
+  display: inline-block;
+  float: left;
+}
+
+.bottom-dark {
+  background-color: @dark-fg;
+}
+
+.focus-bottom {
+  height: 2px !important;
+}
+
+.focus-icon {
+  color: @focus-colour;
+}
+
+.validate-error .input-icon {
+  color: @error-colour;
+}
+
+.validate-error .input-bottom {
+  background-color: @error-colour;
+}
+
+.bottom-slider {
+  width: 0%;
+  background-color: @focus-colour;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 100%;
+}

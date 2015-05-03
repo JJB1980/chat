@@ -1,0 +1,54 @@
+/* myInput directive */
+.input-icon {
+  width: 10%;
+  color: #1f1f99;
+  text-align: center;
+  font-size: 1.2em !important;
+  position: relative;
+  top: 0.2em;
+}
+.icon-dark {
+  color: #a3a3c2;
+}
+.my-input-container {
+  padding-top: 0.5em;
+}
+.my-input {
+  width: 80%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin-left: 0.5em;
+}
+.input-bottom {
+  height: 1px;
+  width: 80%;
+  margin-left: 11%;
+  background-color: #1f1f99;
+  margin-top: 0.2em;
+  display: inline-block;
+  float: left;
+}
+.bottom-dark {
+  background-color: #a3a3c2;
+}
+.focus-bottom {
+  height: 2px !important;
+}
+.focus-icon {
+  color: #99c2ff !important;
+}
+.validate-error .input-icon {
+  color: #b20000;
+}
+.validate-error .input-bottom {
+  background-color: #b20000;
+}
+.bottom-slider {
+  width: 0%;
+  background-color: #99c2ff !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 100%;
+}
