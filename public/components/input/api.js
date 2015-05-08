@@ -6,7 +6,23 @@
 
     'use strict';
 
-    window.app.directive('myInput', function () {
+    var app = window.app;
+
+    app.controller('myInputCtrl', function ($scope, $attrs) {
+        //            if ($attrs.bounce) {
+        //                $scope.bounce = { debounce: {'default': 500, 'blur': 0} };
+        //            }
+        $scope.myicon = $attrs.myicon;
+        $scope.myholder = $attrs.myholder;
+        $scope.mytype = $attrs.mytype;
+        $scope.isdark = $attrs.mydark;
+        $scope.$watch('myerror', function () {
+            //                console.log('myerror: '+$scope.myerror);
+            $scope.thiserror = $scope.myerror
+        });
+    });
+
+    app.directive('myInput', function () {
         return {
             restrict: 'E',
             templateUrl: 'components/input/template.html',
@@ -18,19 +34,7 @@
                 mymessage: '=mymessage',
                 myescape: '=myescape'
             },
-            controller: function ($scope, $attrs) {
-                //            if ($attrs.bounce) {
-                //                $scope.bounce = { debounce: {'default': 500, 'blur': 0} };
-                //            }
-                $scope.myicon = $attrs.myicon;
-                $scope.myholder = $attrs.myholder;
-                $scope.mytype = $attrs.mytype;
-                $scope.isdark = $attrs.mydark;
-                $scope.$watch('myerror', function () {
-                    //                console.log('myerror: '+$scope.myerror);
-                    $scope.thiserror = $scope.myerror
-                });
-            },
+            controller: 'myInputCtrl',
             link: function (scope, element, attrs) {
                 // apply some styling and animation on focus
                 element.find('.my-input').focus(function () {
